@@ -1,0 +1,23 @@
+{
+  "name": "discord-mirror-bot",
+  "version": "1.0.0",
+  "description": "A simple bot to mirror the contents of a Discord channel to another app.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/costanza13/discord-mirror-bot.git"
+  },
+  "keywords": [
+    "discord",
+    "mirror"
+  ],
+  "author": "Michael Costanza",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/costanza13/discord-mirror-bot/issues"
+  },
+  "homepage": "https://github.com/costanza13/discord-mirror-bot#readme"
+}
