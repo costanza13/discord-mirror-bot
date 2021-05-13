@@ -19,5 +19,9 @@
   "bugs": {
     "url": "https://github.com/costanza13/discord-mirror-bot/issues"
   },
-  "homepage": "https://github.com/costanza13/discord-mirror-bot#readme"
+  "homepage": "https://github.com/costanza13/discord-mirror-bot#readme",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.2.0"
+  }
 }
