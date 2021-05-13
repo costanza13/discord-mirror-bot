@@ -4,8 +4,7 @@
   "description": "A simple bot to mirror the contents of a Discord channel to another app.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -24,5 +23,8 @@
   "dependencies": {
     "discord.js": "^11.5.1",
     "dotenv": "^8.2.0"
+  },
+  "engines": {
+    "node": "14.x"
   }
 }

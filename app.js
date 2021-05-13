@@ -17,16 +17,15 @@ bot.on('message', msg => {
     msg.reply('pong');
     msg.channel.send('pong');
 
-  } else if (msg.content === 'STOP') {
-    process.exit(1);
-
   } else if (msg.content.startsWith('!kick')) {
-    if (msg.mentions.users.size) {
-      const taggedUser = msg.mentions.users.first();
-      msg.channel.send(`You wanted to kick: ${taggedUser.username}`);
-    } else {
-      msg.reply('No!');
-    }
+    // if (msg.mentions.users.size) {
+    //   const taggedUser = msg.mentions.users.first();
+    //   msg.channel.send(`You wanted to kick: ${taggedUser.username}`);
+
+    // } else {
+    msg.reply('No!');
+    // }
+
   } else if (msg.author.id != bot.user.id) {
     // console.log(msg);
     let handle = (msg.member.nickname) ? msg.member.nickname : msg.author.username;
@@ -35,4 +34,10 @@ bot.on('message', msg => {
   }
   i++;
 });
-// 799714572059541545
+
+process.on('message', msg => {
+  if (msg.command && msg.command === 'STOP') {
+    bot.destroy();
+    exit(1);
+  }
+});
