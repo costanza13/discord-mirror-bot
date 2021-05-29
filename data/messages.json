@@ -1,0 +1,502 @@
+[
+  {
+    "timestamp": 1620928555156,
+    "handle": "TechdirtInsiderBot",
+    "message": "You wanted to kick: costanza"
+  },
+  {
+    "timestamp": 1620928588482,
+    "handle": "MysticRuler",
+    "message": "!kick @butt"
+  },
+  {
+    "timestamp": 1620928588729,
+    "handle": "TechdirtInsiderBot",
+    "message": "<@!790690181593694288>, No!"
+  },
+  {
+    "timestamp": 1620928680659,
+    "handle": "MysticRuler",
+    "message": "ping"
+  },
+  {
+    "timestamp": 1620928681114,
+    "handle": "TechdirtInsiderBot",
+    "message": "<@!790690181593694288>, pong"
+  },
+  {
+    "timestamp": 1620928681396,
+    "handle": "TechdirtInsiderBot",
+    "message": "pong"
+  },
+  {
+    "timestamp": 1620928777106,
+    "handle": "MysticRuler",
+    "message": "hello"
+  },
+  {
+    "timestamp": 1620928912109,
+    "handle": "MysticRuler",
+    "message": "hey bobn"
+  },
+  {
+    "timestamp": 1620929018918,
+    "handle": "MysticRuler",
+    "message": "jackbutt"
+  },
+  {
+    "timestamp": 1620929019226,
+    "handle": "TechdirtInsiderBot",
+    "message": "<@!790690181593694288>, Received: [MysticRuler] jackbutt"
+  },
+  {
+    "timestamp": 1620929019487,
+    "handle": "TechdirtInsiderBot",
+    "message": "<@799714572059541545>, Received: [TechdirtInsiderBot] <@!790690181593694288>, Received: [MysticRuler] jackbutt"
+  },
+  {
+    "timestamp": 1620929019680,
+    "handle": "TechdirtInsiderBot",
+    "message": "<@799714572059541545>, Received: [TechdirtInsiderBot] <@799714572059541545>, Received: [TechdirtInsiderBot] <@!790690181593694288>, Received: [MysticRuler] jackbutt"
+  },
+  {
+    "timestamp": 1620929020082,
+    "handle": "TechdirtInsiderBot",
+    "message": "<@799714572059541545>, Received: [TechdirtInsiderBot] <@799714572059541545>, Received: [TechdirtInsiderBot] <@799714572059541545>, Received: [TechdirtInsiderBot] <@!790690181593694288>, Received: [MysticRuler] jackbutt"
+  },
+  {
+    "timestamp": 1620929020554,
+    "handle": "TechdirtInsiderBot",
+    "message": "<@799714572059541545>, Received: [TechdirtInsiderBot] <@799714572059541545>, Received: [TechdirtInsiderBot] <@799714572059541545>, Received: [TechdirtInsiderBot] <@799714572059541545>, Received: [TechdirtInsiderBot] <@!790690181593694288>, Received: [MysticRuler] jackbutt"
+  },
+  {
+    "timestamp": 1620929020731,
+    "handle": "MysticRuler",
+    "message": "STOP"
+  },
+  {
+    "timestamp": 1620929584195,
+    "handle": "MysticRuler",
+    "message": "yo baby wassup?"
+  },
+  {
+    "timestamp": 1620929584459,
+    "handle": "TechdirtInsiderBot",
+    "message": "<@!790690181593694288>, Received: [MysticRuler] yo baby wassup?"
+  },
+  {
+    "timestamp": 1620929677839,
+    "handle": "MysticRuler",
+    "message": "oy!"
+  },
+  {
+    "timestamp": 1620929678031,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] oy!"
+  },
+  {
+    "timestamp": 1620929776658,
+    "handle": "MysticRuler",
+    "message": "What's up, my scrollies?"
+  },
+  {
+    "timestamp": 1620929776858,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] What's up, my scrollies?"
+  },
+  {
+    "timestamp": 1620929784599,
+    "handle": "MysticRuler",
+    "message": "STOP"
+  },
+  {
+    "timestamp": 1620932160149,
+    "handle": "MysticRuler",
+    "message": "test"
+  },
+  {
+    "timestamp": 1620932721661,
+    "handle": "MysticRuler",
+    "message": "test again"
+  },
+  {
+    "timestamp": 1620935554556,
+    "handle": "MysticRuler",
+    "message": "testing"
+  },
+  {
+    "timestamp": 1620935695873,
+    "handle": "MysticRuler",
+    "message": "test"
+  },
+  {
+    "timestamp": 1620935696002,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] test"
+  },
+  {
+    "timestamp": 1620935698606,
+    "handle": "MysticRuler",
+    "message": ":q"
+  },
+  {
+    "timestamp": 1620935698931,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] :q"
+  },
+  {
+    "timestamp": 1620935708317,
+    "handle": "MysticRuler",
+    "message": "STOP"
+  },
+  {
+    "timestamp": 1620936035277,
+    "handle": "MysticRuler",
+    "message": "test with heroku"
+  },
+  {
+    "timestamp": 1620936035420,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] test with heroku"
+  },
+  {
+    "timestamp": 1620936747891,
+    "handle": "MysticRuler",
+    "message": "testing again"
+  },
+  {
+    "timestamp": 1620936747939,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] testing again"
+  },
+  {
+    "timestamp": 1620936759944,
+    "handle": "MysticRuler",
+    "message": "will this last more than 60 seconds?"
+  },
+  {
+    "timestamp": 1620936760049,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] will this last more than 60 seconds?"
+  },
+  {
+    "timestamp": 1620936884829,
+    "handle": "MysticRuler",
+    "message": "nope"
+  },
+  {
+    "timestamp": 1620941035935,
+    "handle": "MysticRuler",
+    "message": "ping"
+  },
+  {
+    "timestamp": 1620941036271,
+    "handle": "TechdirtInsiderBot",
+    "message": "<@!790690181593694288>, pong"
+  },
+  {
+    "timestamp": 1620941036525,
+    "handle": "TechdirtInsiderBot",
+    "message": "pong"
+  },
+  {
+    "timestamp": 1620941047552,
+    "handle": "MysticRuler",
+    "message": "working"
+  },
+  {
+    "timestamp": 1620941047905,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] working"
+  },
+  {
+    "timestamp": 1620941068289,
+    "handle": "MysticRuler",
+    "message": "how about now?  should be stopped"
+  },
+  {
+    "timestamp": 1620941093019,
+    "handle": "MysticRuler",
+    "message": "and... restarted"
+  },
+  {
+    "timestamp": 1620941093325,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] and... restarted"
+  },
+  {
+    "timestamp": 1620941125011,
+    "handle": "MysticRuler",
+    "message": "stopped again (intentionally)"
+  },
+  {
+    "timestamp": 1620946449292,
+    "handle": "MysticRuler",
+    "message": "Let's see that mirrorism!"
+  },
+  {
+    "timestamp": 1620946461002,
+    "handle": "MysticRuler",
+    "message": "wha?"
+  },
+  {
+    "timestamp": 1620946506277,
+    "handle": "MysticRuler",
+    "message": "ah, there we go"
+  },
+  {
+    "timestamp": 1620946506704,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] ah, there we go"
+  },
+  {
+    "timestamp": 1620946517416,
+    "handle": "mmasnick",
+    "message": "Hello?"
+  },
+  {
+    "timestamp": 1620946517635,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [mmasnick] Hello?"
+  },
+  {
+    "timestamp": 1620946521038,
+    "handle": "mmasnick",
+    "message": "whoo"
+  },
+  {
+    "timestamp": 1620946521362,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [mmasnick] whoo"
+  },
+  {
+    "timestamp": 1620946548045,
+    "handle": "MysticRuler",
+    "message": "This is running from my local machine.  Going to upload the latest code to heroku and see if it works."
+  },
+  {
+    "timestamp": 1620946548305,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] This is running from my local machine.  Going to upload the latest code to heroku and see if it works."
+  },
+  {
+    "timestamp": 1620948005841,
+    "handle": "MysticRuler",
+    "message": "ping"
+  },
+  {
+    "timestamp": 1620948006111,
+    "handle": "TechdirtInsiderBot",
+    "message": "<@!790690181593694288>, pong"
+  },
+  {
+    "timestamp": 1620948006470,
+    "handle": "TechdirtInsiderBot",
+    "message": "pong"
+  },
+  {
+    "timestamp": 1620948009033,
+    "handle": "MysticRuler",
+    "message": "STOP"
+  },
+  {
+    "timestamp": 1620948009271,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] STOP"
+  },
+  {
+    "timestamp": 1620948102957,
+    "handle": "MysticRuler",
+    "message": "pimg"
+  },
+  {
+    "timestamp": 1620948103281,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] pimg"
+  },
+  {
+    "timestamp": 1620948427764,
+    "handle": "MysticRuler",
+    "message": "ping"
+  },
+  {
+    "timestamp": 1620948427959,
+    "handle": "TechdirtInsiderBot",
+    "message": "<@!790690181593694288>, pong"
+  },
+  {
+    "timestamp": 1620948428195,
+    "handle": "TechdirtInsiderBot",
+    "message": "pong"
+  },
+  {
+    "timestamp": 1620948444577,
+    "handle": "MysticRuler",
+    "message": "ping"
+  },
+  {
+    "timestamp": 1620949935316,
+    "handle": "MysticRuler",
+    "message": "<@!689596423448166514>, now it's using heroku"
+  },
+  {
+    "timestamp": 1620949935452,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] <@!689596423448166514>, now it's using heroku"
+  },
+  {
+    "timestamp": 1620949955467,
+    "handle": "mmasnick",
+    "message": "exciting"
+  },
+  {
+    "timestamp": 1620949955548,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [mmasnick] exciting"
+  },
+  {
+    "timestamp": 1620949972062,
+    "handle": "MysticRuler",
+    "message": "so, i got the basic send/receive working.  now i need to hook it up to our db"
+  },
+  {
+    "timestamp": 1620949972130,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] so, i got the basic send/receive working.  now i need to hook it up to our db"
+  },
+  {
+    "timestamp": 1620950001403,
+    "handle": "MysticRuler",
+    "message": "i _think_ it will be free, at the level we'll be using it"
+  },
+  {
+    "timestamp": 1620950001481,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] i _think_ it will be free, at the level we'll be using it"
+  },
+  {
+    "timestamp": 1620950016318,
+    "handle": "mmasnick",
+    "message": "even better"
+  },
+  {
+    "timestamp": 1620950016384,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [mmasnick] even better"
+  },
+  {
+    "timestamp": 1621445576709,
+    "handle": "MysticRuler",
+    "message": "ping"
+  },
+  {
+    "timestamp": 1621445576781,
+    "handle": "TechdirtInsiderBot",
+    "message": "<@!790690181593694288>, pong"
+  },
+  {
+    "timestamp": 1621445576939,
+    "handle": "TechdirtInsiderBot",
+    "message": "pong"
+  },
+  {
+    "timestamp": 1621465799919,
+    "handle": "MysticRuler",
+    "message": "ping"
+  },
+  {
+    "timestamp": 1621465800133,
+    "handle": "TechdirtInsiderBot",
+    "message": "<@!790690181593694288>, pong"
+  },
+  {
+    "timestamp": 1621465800382,
+    "handle": "TechdirtInsiderBot",
+    "message": "pong"
+  },
+  {
+    "timestamp": 1621466475660,
+    "handle": "MysticRuler",
+    "message": "test"
+  },
+  {
+    "timestamp": 1621466476041,
+    "handle": "TechdirtInsiderBot",
+    "message": "Received: [MysticRuler] test"
+  },
+  {
+    "timestamp": 1621466629934,
+    "handle": "MysticRuler",
+    "message": "test"
+  },
+  {
+    "timestamp": 1621467861733,
+    "handle": "MysticRuler",
+    "message": "another test"
+  },
+  {
+    "timestamp": 1621467965971,
+    "handle": "MysticRuler",
+    "message": "and another"
+  },
+  {
+    "timestamp": 1621468040137,
+    "handle": "MysticRuler",
+    "message": "one more"
+  },
+  {
+    "timestamp": 1621468056202,
+    "handle": "MysticRuler",
+    "message": "that one worked.  how about another?"
+  },
+  {
+    "timestamp": 1621468326750,
+    "handle": "MysticRuler",
+    "message": "json formatting..."
+  },
+  {
+    "timestamp": 1622235608938,
+    "handle": "MysticRuler",
+    "message": "fourth message"
+  },
+  {
+    "timestamp": 1622235682029,
+    "handle": "MysticRuler",
+    "message": "curious"
+  },
+  {
+    "timestamp": 1622235757729,
+    "handle": "MysticRuler",
+    "message": "curious"
+  },
+  {
+    "timestamp": 1622243670120,
+    "handle": "MysticRuler",
+    "message": "channel id"
+  },
+  {
+    "timestamp": 1622259693877,
+    "handle": "MysticRuler",
+    "message": "5/28 @ 8:41PM"
+  },
+  {
+    "timestamp": 1622259755036,
+    "handle": "MysticRuler",
+    "message": "8:42"
+  },
+  {
+    "timestamp": 1622259787307,
+    "handle": "MysticRuler",
+    "message": "pushing"
+  },
+  {
+    "timestamp": 1622260110503,
+    "handle": "MysticRuler",
+    "message": "shifting old  messages"
+  },
+  {
+    "timestamp": 1622260148058,
+    "handle": "MysticRuler",
+    "message": "am i at 100?"
+  }
+]
