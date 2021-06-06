@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const messages = require('./data/messages');
+const path = require('path');
 
 const { fork } = require('child_process');
 
@@ -7,18 +7,19 @@ router.get('/', (req, res) => {
   return res.send("'Sup.");
 });
 
-router.get('/api/messages/:index', (req, res) => {
-  const index = parseInt(req.params.index);
-  if (index < messages.length && index >= 0) {
-    return res.json(messages[index]);
-  } else {
-    res.writeHead(404, { 'Content-Type': 'text/html' });
-    return res.end('Not found.')
+router.get('/api/messages/:id', (req, res) => {
+  for (let i = 0; i < messages.length; i++) {
+    if (messages[i].id === req.params.id) {
+      return res.json(messages[i]);
+    }
   }
+  // if we make it here, no message with the given id was found
+  res.writeHead(404, { 'Content-Type': 'text/html' });
+  return res.end('Not found.')
 });
 
 router.get('/api/messages', (req, res) => {
-  return res.json(messages);
+  return res.sendFile(path.join(__dirname, 'data/messages.json'), { headers: { 'Content-Type': 'application/json' } });
 });
 
 router.get('/start', (req, res) => {

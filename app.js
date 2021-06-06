@@ -5,6 +5,7 @@ const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 const Discord = require('discord.js');
 const { exit } = require('process');
 const TOKEN = process.env.TOKEN;
+const MESSAGE_LIMIT = process.env.MESSAGE_LIMIT || 200;
 const bot = new Discord.Client();
 let guild;
 let channel;
@@ -28,7 +29,7 @@ process.on('message', msg => {
 
 const loadMessageHistory = (guild, channel) => {
 
-  channel.messages.fetch({ limit: 100 })
+  channel.messages.fetch({ limit: MESSAGE_LIMIT })
     .then(messages => {
       // console.log(messages);
       const authorIds = messages.map(a => a.author.id);
@@ -39,7 +40,7 @@ const loadMessageHistory = (guild, channel) => {
         messages.forEach(message => {
           const nickname = members.get(message.author.id).nickname;
           const handle =  nickname ? nickname : message.author.username;
-          chatMessages.unshift({ timestamp: message.createdTimestamp, handle, message: message.content });
+          chatMessages.unshift({ id: message.id, timestamp: message.createdTimestamp, modified: message.editedTimestamp, handle, content: message.content });
         });
         writeMessagesFile();
       })
@@ -48,10 +49,31 @@ const loadMessageHistory = (guild, channel) => {
     .catch(console.error);
 };
 
-const storeMessage = (timestamp, handle, message) => {
-  chatMessages.push({ timestamp, handle, message });
-  while (chatMessages.length > 200) {
+const storeMessage = (id, timestamp, handle, content) => {
+  chatMessages.push({ id, timestamp, modified: 0, handle, content });
+  while (chatMessages.length > MESSAGE_LIMIT) {
     chatMessages.shift();  // shift off the oldest message
+  }
+  return writeMessagesFile();
+};
+
+const updateMessage = (id, modified, content) => {
+  for (let i = 0; i < chatMessages.length; i++) {
+    if (chatMessages[i].id === id) {
+      chatMessages[i].content = content;
+      chatMessages[i].modified = modified;
+      break;
+    }
+  }
+  return writeMessagesFile();
+};
+
+const deleteMessage = (id) => {
+  for (let i = 0; i < chatMessages.length; i++) {
+    if (chatMessages[i].id === id) {
+      chatMessages.splice(i, 1);
+      break;
+    }
   }
   return writeMessagesFile();
 };
@@ -97,17 +119,16 @@ const init = () => {
 
   let i = 0;
   bot.on('message', msg => {
-    console.log(msg);
-    if (msg.content === 'ping') {
-      msg.reply('pong');
-      msg.channel.send('pong');
-
-    } else if (msg.author.id != bot.user.id) {
-      console.log(msg);
+    // console.log(msg);
+    if (msg.author.id != bot.user.id) {
+      if (msg.content === 'ping-bot') {
+        msg.reply('pong');
+        msg.channel.send('pong');
+      }
       let handle = (msg.member.nickname) ? msg.member.nickname : msg.author.username;
       console.log(i + ': ' + handle + ' - ' + msg.content);
       // msg.channel.send('Received: [' + handle + '] ' + msg.content);
-      storeMessage(msg.createdTimestamp, handle, msg.content)
+      storeMessage(msg.id, msg.createdTimestamp, handle, msg.content)
         .catch(error => {
           console.error('Unable to store messages: ' + error);
         });
@@ -116,8 +137,14 @@ const init = () => {
   });
 
   bot.on('messageUpdate', (oldMsg, newMsg) => {
-    console.log('old: ', oldMsg);
-    console.log('new: ', newMsg);
+    // console.log('old: ', oldMsg);
+    // console.log('new: ', newMsg);
+    updateMessage(newMsg.id, newMsg.editedTimestamp, newMsg.content);
+  });
+
+  bot.on('messageDelete', (msg) => {
+    // console.log('delete: ', msg);
+    deleteMessage(msg.id);
   });
 
 }
