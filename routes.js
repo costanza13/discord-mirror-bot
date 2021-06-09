@@ -23,7 +23,7 @@ router.get('/api/messages', (req, res) => {
   const messagesFile = path.join(__dirname, 'data/messages.json');
   fs.readFile(messagesFile, 'utf8', (err, messagesJson) => {
     if (err) {
-      return res.status(404).res.json([]);
+      return res.status(404).json([]);
     }
     messages = JSON.parse(messagesJson);
     const headers = {
