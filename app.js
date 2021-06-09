@@ -9,19 +9,18 @@ const MESSAGE_LIMIT = process.env.MESSAGE_LIMIT || 200;
 const bot = new Discord.Client();
 let guild;
 let channel;
-let members;
 
 let chatMessages = [];
 
 process.on('SIGINT', () => {
-  console.log('\nDisconnecting from Discord.');
+  console.log('\nDisconnecting from Discord - process interrupted.');
   bot.destroy();
   exit(1);
 });
 
 process.on('message', msg => {
   if (msg.command && msg.command === 'STOP') {
-    console.log('Disconnecting from Discord.');
+    console.log('Disconnecting from Discord - stopped by server.');
     bot.destroy();
     exit(1);
   }
@@ -86,6 +85,11 @@ const writeMessagesFile = () => {
         return;
       }
 
+      fs.stat('./data/messages.json', (err, stats) => {
+        // console.log('modified: ' + stats.mtime + ' - etag: ' + chatMessages[chatMessages.length - 1].id);
+        process.send(JSON.stringify({ messagesStats: { modified: stats.mtime , etag: chatMessages[chatMessages.length - 1].id } }));
+      });
+
       resolve({
         ok: true,
         message: 'stored chat history'
@@ -126,7 +130,7 @@ const init = () => {
         msg.channel.send('pong');
       }
       let handle = (msg.member.nickname) ? msg.member.nickname : msg.author.username;
-      console.log(i + ': ' + handle + ' - ' + msg.content);
+      // console.log(i + ': ' + handle + ' - ' + msg.content);
       // msg.channel.send('Received: [' + handle + '] ' + msg.content);
       storeMessage(msg.id, msg.createdTimestamp, handle, msg.content)
         .catch(error => {

@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/costanza13/discord-mirror-bot#readme",
   "dependencies": {
+    "crypto-js": "^4.0.0",
     "discord.js": "^12.5.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1"
