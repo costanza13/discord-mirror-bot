@@ -89,7 +89,7 @@ const writeMessagesFile = () => {
         return;
       }
 
-      process.send(JSON.stringify({ notify: 'messages modified' }));
+      process.send !== undefined && process.send(JSON.stringify({ notify: 'messages modified' }));
     });
 
     resolve({
