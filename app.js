@@ -4,8 +4,12 @@ const fs = require('fs');
 const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require('constants');
 const Discord = require('discord.js');
 const { exit } = require('process');
+
 const TOKEN = process.env.TOKEN;
+const GUILD_ID = process.env.GUILD_ID;
+const CHANNEL_ID = process.env.CHANNEL_ID;
 const MESSAGE_LIMIT = process.env.MESSAGE_LIMIT || 200;
+
 const bot = new Discord.Client();
 let guild;
 let channel;
@@ -34,15 +38,15 @@ const loadMessageHistory = (guild, channel) => {
       const authorIds = messages.map(a => a.author.id);
       // console.log(authorIds);
       const members = guild.members.fetch({ user: authorIds })
-      .then(members => {
-        // console.log(members);
-        messages.forEach(message => {
-          const nickname = members.get(message.author.id).nickname;
-          const handle =  nickname ? nickname : message.author.username;
-          chatMessages.unshift({ id: message.id, timestamp: message.createdTimestamp, modified: message.editedTimestamp, handle, content: message.content });
-        });
-        writeMessagesFile();
-      })
+        .then(members => {
+          // console.log(members);
+          messages.forEach(message => {
+            const nickname = members.get(message.author.id).nickname;
+            const handle = nickname ? nickname : message.author.username;
+            chatMessages.unshift({ id: message.id, timestamp: message.createdTimestamp, modified: message.editedTimestamp, handle, content: message.content });
+          });
+          writeMessagesFile();
+        })
     })
     // .then()
     .catch(console.error);
@@ -85,15 +89,12 @@ const writeMessagesFile = () => {
         return;
       }
 
-      fs.stat('./data/messages.json', (err, stats) => {
-        // console.log('modified: ' + stats.mtime + ' - etag: ' + chatMessages[chatMessages.length - 1].id);
-        process.send(JSON.stringify({ messagesStats: { modified: stats.mtime , etag: chatMessages[chatMessages.length - 1].id } }));
-      });
+      process.send !== undefined && process.send(JSON.stringify({ notify: 'messages modified' }));
+    });
 
-      resolve({
-        ok: true,
-        message: 'stored chat history'
-      });
+    resolve({
+      ok: true,
+      message: 'stored chat history'
     });
   });
 };
@@ -103,14 +104,14 @@ const init = () => {
 
   bot.on('ready', () => {
     console.info(`Logged in as ${bot.user.tag}!`);
-    bot.guilds.fetch('841836114188042250')
+    bot.guilds.fetch(GUILD_ID)
       .then(guildObj => {
         guild = guildObj;
         // console.log('Guild: ', guild);
         // console.log('guild class: ', guild.constructor.name);
       })
       .then(() => {
-        bot.channels.fetch('841836326596640798')
+        bot.channels.fetch(CHANNEL_ID)
           .then(channelData => {
             channel = channelData;
             // console.log('Channel: ', channel);

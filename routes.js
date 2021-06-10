@@ -7,12 +7,32 @@ const { fork } = require('child_process');
 
 let messages = [];
 let messagesModified = new Date().toUTCString();
-let messagesEtag = md5(messagesModified);
+let messagesEtag = md5(JSON.stringify(messages));
+
+function loadMessages() {
+  fs.readFile(
+    path.join(__dirname, 'data/messages.json'),
+    'utf8',
+    (err, messagesJson) => {
+      if (err) {
+        console.error(err);
+        messages = [];
+
+      } else {
+        messages = JSON.parse(messagesJson);
+        fs.stat('./data/messages.json', (err, stats) => {
+          messagesModified = stats.mtime;
+          messagesEtag = md5(JSON.stringify(messages));
+        });
+      }
+    }
+  );
+}
 
 router.head('/api/messages', (req, res) => {
   const headers = {
-    'Last-Modified' : messagesModified,
-    'ETag' : messagesEtag,
+    'Last-Modified': messagesModified,
+    'ETag': messagesEtag,
     'Content-Type': 'application/json'
   };
   res.set(headers);
@@ -20,29 +40,39 @@ router.head('/api/messages', (req, res) => {
 });
 
 router.get('/api/messages', (req, res) => {
-  const messagesFile = path.join(__dirname, 'data/messages.json');
-  fs.readFile(messagesFile, 'utf8', (err, messagesJson) => {
-    if (err) {
-      return res.status(404).json([]);
-    }
-    messages = JSON.parse(messagesJson);
-    const headers = {
-      'Last-Modified' : messagesModified,
-      'ETag' : messagesEtag,
-      'Content-Type': 'application/json'
-    };
-    res.set(headers);
-    res.send(messages);
-  });
+  if (!messages || messages.length === 0) {
+    return res.status(404).send('Not found.');
+  }
+  const headers = {
+    'Last-Modified': messagesModified,
+    'ETag': messagesEtag,
+    'Content-Type': 'application/json'
+  };
+  res.set(headers);
+  res.json(messages);
+});
+
+router.get('/api/messages/latest', (req, res) => {
+  if (!messages || messages.length === 0) {
+    return res.status(404).send('Not found.');
+  }
+  const latestMessage = messages[messages.length - 1];
+  const headers = {
+    'Last-Modified': latestMessage.modified ? new Date(latestMessage.modified) : new Date(latestMessage.timestamp),
+    'ETag': md5(latestMessage.content),
+    'Content-Type': 'application/json'
+  };
+  res.set(headers);
+  res.json(latestMessage);
 });
 
 router.get('/api/messages/:id', (req, res) => {
   for (let i = 0; i < messages.length; i++) {
     if (messages[i].id === req.params.id) {
-      const msgLastModified = message[i].modified ? new Date(message[i].modified) : new Date(message[i].timestamp);
+      const msgLastModified = messages[i].modified ? new Date(messages[i].modified) : new Date(messages[i].timestamp);
       const headers = {
-        'Last-Modified' : msgLastModified.toUTCString(),
-        'ETag' : md5(messages[i].content),
+        'Last-Modified': msgLastModified.toUTCString(),
+        'ETag': md5(messages[i].content),
         'Content-Type': 'application/json'
       };
       res.set(headers);
@@ -68,10 +98,11 @@ router.get('/start', (req, res) => {
         req.app.locals.botProcess = null;
       });
 
-      req.app.locals.botProcess.on('message', message => {
-        const data = JSON.parse(message);
-        messagesModified = data.messagesStats.modified;
-        messagesEtag = data.messagesStats.etag;
+      req.app.locals.botProcess.on('message', appNotification => {
+        const notification = JSON.parse(appNotification);
+        if (notification.notify === 'messages modified') {
+          loadMessages();
+        }
       });
     }
 
@@ -105,5 +136,7 @@ router.get('/stop', (req, res) => {
     return res.end('Forbidden.');
   }
 });
+
+loadMessages();
 
 module.exports = router;
