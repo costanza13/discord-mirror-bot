@@ -1,6 +1,7 @@
 const serverBaseUrl = location.origin;
-const minPollInterval = 2;  // initial polling interval, will be adjusted based on activity
-let pollInterval = minPollInterval;
+const minPollInterval = 2;   // the shortest time between polls; smaller == more responsive but also more requests
+const maxPollInterval = 10;  // the longest we'll allow between polls  
+let pollInterval = minPollInterval;  // initial polling interval, will be adjusted based on activity
 let secondsSinceLastMessage = 0;
 let etag = '';
 
@@ -58,8 +59,8 @@ const pollForMessages = function () {
         });
       } else {
         secondsSinceLastMessage += pollInterval;
-        if (secondsSinceLastMessage > 60 * minPollInterval && pollInterval < 3 * minPollInterval) {
-          pollInterval += minPollInterval;
+        if (secondsSinceLastMessage > 30 * minPollInterval && pollInterval < maxPollInterval) {
+          pollInterval += 2;
         }
       }
       setTimeout(pollForMessages, pollInterval * 1000);
