@@ -1,4 +1,4 @@
-const serverBaseUrl = "http://localhost:8000";
+const serverBaseUrl = location.origin;
 const minPollInterval = 2;  // initial polling interval, will be adjusted based on activity
 let pollInterval = minPollInterval;
 let secondsSinceLastMessage = 0;
@@ -62,7 +62,7 @@ const pollForMessages = function () {
           pollInterval += minPollInterval;
         }
       }
-      setTimeout(pollForMessages, pollInterval);
+      setTimeout(pollForMessages, pollInterval * 1000);
     })
     .catch(error => console.error(error));
 }
@@ -72,5 +72,5 @@ loadMessages().then((len) => {
     chatEl.scrollTop = chatEl.scrollHeight;
   }
   // start polling for new messages
-  setTimeout(pollForMessages, pollInterval);
+  setTimeout(pollForMessages, pollInterval * 1000);
 });
