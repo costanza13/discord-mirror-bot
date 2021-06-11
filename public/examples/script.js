@@ -1,6 +1,6 @@
 const serverBaseUrl = location.origin;
 const minPollInterval = 2;   // the shortest time between polls; smaller == more responsive but also more requests
-const maxPollInterval = 30;  // the longest we'll allow between polls  
+const maxPollInterval = 10;  // the longest we'll allow between polls  
 let pollInterval = minPollInterval;  // initial polling interval, will be adjusted based on activity
 let secondsSinceLastMessage = 0;
 let etag = '';
