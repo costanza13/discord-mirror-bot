@@ -2,8 +2,9 @@ const router = require('express').Router();
 const fs = require('fs');
 const path = require('path');
 const md5 = require('crypto-js/md5');
-
 const { fork } = require('child_process');
+
+require('dotenv').config();
 
 let messages = [];
 let messagesModified = new Date().toUTCString();
@@ -85,6 +86,8 @@ router.get('/api/messages/:id', (req, res) => {
 });
 
 router.get('/', (req, res) => {
+  // console.log(req.app.locals.botProcess);
+  // fill this in with a helpful but discouraging landing page
   return res.send("'Sup.");
 });
 
@@ -111,7 +114,7 @@ router.get('/start', (req, res) => {
 
   } else {
     console.log('Attept to start bot without valid key.');
-
+    console.log({ given: req.query.botkey, stored: process.env.BOTKEY });
     res.writeHead(403, { 'Content-Type': 'text/html' });
     return res.end('Forbidden.');
   }

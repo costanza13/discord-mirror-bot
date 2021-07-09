@@ -6,8 +6,7 @@ let secondsSinceLastMessage = 0;
 let etag = '';
 
 const chatEl = document.querySelector('#chat');
-const loadingMsgEl = document.querySelector('#loading-msg');
-
+const loadingMsgPollEl = document.querySelector('#chat .loading-msg');
 
 const loadMessages = function () {
   let headers;
@@ -19,8 +18,8 @@ const loadMessages = function () {
     .then(messages => {
       if (messages.length) {
         etag = headers.get('etag');
-        if (loadingMsgEl) {
-          loadingMsgEl.remove();
+        if (loadingMsgPollEl) {
+          loadingMsgPollEl.remove();
         }
         const messagesEl = document.createElement('ul');
         let lastHandle = '';

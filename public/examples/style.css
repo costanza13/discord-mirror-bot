@@ -11,7 +11,7 @@
   transform: translate(-50%, -50%);
 }
 
-#container {
+.container {
   background-color: #f0f7ff;
   border: solid 1px #bee1fd;
   display: flex;
@@ -23,7 +23,7 @@
   width: 100%
 }
 
-#container h1 {
+.container h1 {
   flex: 0 1 auto;
   font-size: 200%;
   text-align: center;
