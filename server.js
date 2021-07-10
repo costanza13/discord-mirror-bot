@@ -22,6 +22,9 @@ app.use(function (req, res) {
 
 const server = require('http').createServer(app);
 app.locals.io = require('socket.io')(server);
+app.locals.io.on('connection', socket => {
+  console.log(`client connected via web socket: ${socket.id}`);
+});
 
 server.listen(PORT, () => {
   console.log(`API server listening on port ${PORT}`);

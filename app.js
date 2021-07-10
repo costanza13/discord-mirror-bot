@@ -32,7 +32,7 @@ process.on('message', msg => {
 
 const loadMessageHistory = (guild, channel) => {
 
-  channel.messages.fetch({ limit: MESSAGE_LIMIT })
+  return channel.messages.fetch({ limit: MESSAGE_LIMIT })
     .then(messages => {
       // console.log(messages);
       const authorIds = messages.map(a => a.author.id);
@@ -116,7 +116,11 @@ const init = () => {
             channel = channelData;
             // console.log('Channel: ', channel);
             // console.log('channel class: ', channel.constructor.name);
-            loadMessageHistory(guild, channel);
+            loadMessageHistory(guild, channel)
+            .then(() => {
+              // inform the server that messages are loaded
+              process.send !== undefined && process.send(JSON.stringify({ notify: 'messages modified' }));
+            });
           });
       })
       .catch(console.error);

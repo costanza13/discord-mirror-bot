@@ -1,0 +1,56 @@
+* {
+  box-sizing: border-box;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.centered-xy {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+}
+
+.centered-x {
+  display: block;
+  margin: 0 auto;
+  width: fit-content;
+}
+
+.container {
+  background-color: #f0f7ff;
+  border: solid 1px #bee1fd;
+  height: 100%;
+  padding: 10px;
+  max-height: 300px;
+  max-width: 500px;
+  text-align: center;
+  width: 100%;
+}
+
+#bot-status {
+  background-color: #fff;
+  border-radius: 5px;
+  display: block;
+  font-size: 200%;
+  margin: 2rem auto;
+  min-width: 8rem;
+  padding: 0.5rem;
+  text-align: center;
+  width: fit-content;
+}
+
+#bot-status.up {
+  background-color: green;
+  color: #fff;
+}
+
+#bot-status.down {
+  background-color:orange;
+  color: #fff;
+}
+
+#bot-status.up {
+  background-color: red;
+  color: #fff;
+}

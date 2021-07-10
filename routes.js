@@ -61,66 +61,76 @@ router.get('/api/messages/:id', (req, res) => {
   return res.end('Not found.')
 });
 
-router.get('/', (req, res) => {
-  // console.log(req.app);
-  // fill this in with a helpful but discouraging landing page
-  return res.send("'Sup.");
+router.get('/api/bot/status', (req, res) => {
+  const botStatus = {};
+  if (req.app.locals.botProcess) {
+    botStatus.code = 1;
+    botStatus.message = 'Discord Bot is UP.';
+  } else {
+    botStatus.code = 0;
+    botStatus.message = 'Discord Bot is DOWN.';
+  }
+  res.json(botStatus);
 });
 
-router.get('/start', (req, res) => {
-  if (req.query && req.query.botkey === process.env.BOTKEY) {
-    console.log('Starting bot');
-
+router.post('/api/bot/start', (req, res) => {
+  if (req.body.botKey && req.body.botKey == process.env.BOTKEY) {
+    // only start if not already started
     if (!req.app.locals.botProcess) {
+      console.log('Starting bot');
+
       req.app.locals.botProcess = fork(__dirname + '/app');
+      // watch for 'exit' signal from bot app
       req.app.locals.botProcess.on('exit', (code, signal) => {
         req.app.locals.botProcess = null;
       });
 
-      req.app.locals.io.on('connection', socket => {
-        console.log(`client connected via web socket: ${socket.id}`);
-        // console.log(messages.getAll());
-        socket.emit('messages', JSON.stringify(messages.getAll()));
-      });
-
+      // once the bot is started, start listening for messages from it
       req.app.locals.botProcess.on('message', appNotification => {
         const notification = JSON.parse(appNotification);
         if (notification.notify === 'messages modified') {
           messages.loadMessages();
-
           req.app.locals.io.emit('messages', JSON.stringify(messages.getAll()));
         }
       });
+    } else {
+      console.log('Bot already running');
     }
-
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    return res.end('Starting bot');
 
   } else {
     console.log('Attept to start bot without valid key.');
-    console.log({ given: req.query.botkey, stored: process.env.BOTKEY });
-    res.writeHead(403, { 'Content-Type': 'text/html' });
-    return res.end('Forbidden.');
+    console.log(`Supplied key: ${req.body.botKey}`);
+    return res.status(403).json({ code: -1, message: 'Forbidden.' });
+  }
+
+  if (req.app.locals.botProcess) {
+    return res.json({ code: 1, message: 'Discord bot running.' });
+  } else {
+    return res.status(500).json({ code: -1, message: 'Unable to start Discord bot.' });
   }
 });
 
-router.get('/stop', (req, res) => {
-  if (req.query && req.query.botkey === process.env.BOTKEY) {
-    console.log('Stopping bot');
-
+router.post('/api/bot/stop', (req, res) => {
+  if (req.body.botKey && req.body.botKey == process.env.BOTKEY) {
     if (req.app.locals.botProcess) {
+      console.log('Stopping bot');
+
       req.app.locals.botProcess.send({ command: 'STOP' });
       req.app.locals.botProcess = null;
+    } else {
+      console.log('Bot not running');
     }
-
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    return res.end('Stopping bot');
 
   } else {
     console.log('Attept to stop bot without valid key.');
+    console.log(`Supplied key: ${req.body.botKey}`);
+    return res.status(403).json({ code: -1, message: 'Forbidden.' });
+  }
 
-    res.writeHead(403, { 'Content-Type': 'text/html' });
-    return res.end('Forbidden.');
+  if (!req.app.locals.botProcess) {
+    return res.json({ code: 0, message: 'Discord bot stopped' });
+  } else {
+    return res.status(500).json({ code: -1, message: 'Unable to stop Discord bot.' });
   }
 });
 
