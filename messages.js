@@ -3,12 +3,21 @@ const path = require('path');
 const md5 = require('crypto-js/md5');
 
 class Messages {
+  filePath;
   messages = [];
   lastModified;
   etag;
 
   constructor() {
-    this.loadMessages();
+    this.filePath = path.join(__dirname, 'data/messages.json');
+    try {
+      if (!fs.existsSync(this.filePath)) {
+        fs.writeFileSync(this.filePath, JSON.stringify(this.messages, null, 2));
+        this.loadMessages();
+      }
+    } catch(err) {
+      console.error(err)
+    }
   }
 
   loadMessages = () => {
