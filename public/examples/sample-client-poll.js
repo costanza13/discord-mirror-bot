@@ -49,16 +49,20 @@ const loadMessages = function () {
 const pollForMessages = function () {
   return fetch(serverBaseUrl + '/api/messages', { method: 'HEAD' })
     .then(response => {
+      // if there's an update...
       if (response.headers.get('etag') !== etag) {
-        secondsSinceLastMessage = 0;
-        pollInterval = minPollInterval;
+        secondsSinceLastMessage = 0;  // reset time since latest message
+        pollInterval = minPollInterval;  // reset the polling interval (check more frequently)
+        // load the updated messages
         loadMessages().then(len => {
           chatEl.scrollTop = chatEl.scrollHeight;
           etag = response.headers.get('etag');
         });
+      // otherwise
       } else {
-        secondsSinceLastMessage += pollInterval;
+        secondsSinceLastMessage += pollInterval; // track time since latest message
         if (secondsSinceLastMessage > 30 * minPollInterval && pollInterval < maxPollInterval) {
+          // keep increasing the polling interval (stop at maxPollInterval) while no new messages are coming in
           pollInterval += 2;
         }
       }

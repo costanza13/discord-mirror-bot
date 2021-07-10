@@ -2,11 +2,11 @@ const express = require('express');
 const app = express();
 require('dotenv').config();
 const routes = require('./routes');
-const sockets = require('./sockets');
 
 const PORT = process.env.PORT || 80;
 
 app.locals.botProcess = null;
+app.locals.io = null;
 
 // parse incoming string or array data
 app.use(express.urlencoded({ extended: true }));
@@ -21,7 +21,7 @@ app.use(function (req, res) {
 });
 
 const server = require('http').createServer(app);
-sockets.init(server);
+app.locals.io = require('socket.io')(server);
 
 server.listen(PORT, () => {
   console.log(`API server listening on port ${PORT}`);
