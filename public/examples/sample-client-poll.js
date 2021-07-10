@@ -1,12 +1,12 @@
-const serverBaseUrl = "http://localhost:8000";
-const minPollInterval = 2;  // initial polling interval, will be adjusted based on activity
-let pollInterval = minPollInterval;
+const serverBaseUrl = location.origin;
+const minPollInterval = 2;   // the shortest time between polls; smaller == more responsive but also more requests
+const maxPollInterval = 10;  // the longest we'll allow between polls  
+let pollInterval = minPollInterval;  // initial polling interval, will be adjusted based on activity
 let secondsSinceLastMessage = 0;
 let etag = '';
 
 const chatEl = document.querySelector('#chat');
-const loadingMsgEl = document.querySelector('#loading-msg');
-
+const loadingMsgPollEl = document.querySelector('#chat .loading-msg');
 
 const loadMessages = function () {
   let headers;
@@ -18,8 +18,8 @@ const loadMessages = function () {
     .then(messages => {
       if (messages.length) {
         etag = headers.get('etag');
-        if (loadingMsgEl) {
-          loadingMsgEl.remove();
+        if (loadingMsgPollEl) {
+          loadingMsgPollEl.remove();
         }
         const messagesEl = document.createElement('ul');
         let lastHandle = '';
@@ -49,20 +49,24 @@ const loadMessages = function () {
 const pollForMessages = function () {
   return fetch(serverBaseUrl + '/api/messages', { method: 'HEAD' })
     .then(response => {
+      // if there's an update...
       if (response.headers.get('etag') !== etag) {
-        secondsSinceLastMessage = 0;
-        pollInterval = minPollInterval;
+        secondsSinceLastMessage = 0;  // reset time since latest message
+        pollInterval = minPollInterval;  // reset the polling interval (check more frequently)
+        // load the updated messages
         loadMessages().then(len => {
           chatEl.scrollTop = chatEl.scrollHeight;
           etag = response.headers.get('etag');
         });
+      // otherwise
       } else {
-        secondsSinceLastMessage += pollInterval;
-        if (secondsSinceLastMessage > 60 * minPollInterval && pollInterval < 3 * minPollInterval) {
-          pollInterval += minPollInterval;
+        secondsSinceLastMessage += pollInterval; // track time since latest message
+        if (secondsSinceLastMessage > 30 * minPollInterval && pollInterval < maxPollInterval) {
+          // keep increasing the polling interval (stop at maxPollInterval) while no new messages are coming in
+          pollInterval += 2;
         }
       }
-      setTimeout(pollForMessages, pollInterval);
+      setTimeout(pollForMessages, pollInterval * 1000);
     })
     .catch(error => console.error(error));
 }
@@ -72,5 +76,5 @@ loadMessages().then((len) => {
     chatEl.scrollTop = chatEl.scrollHeight;
   }
   // start polling for new messages
-  setTimeout(pollForMessages, pollInterval);
+  setTimeout(pollForMessages, pollInterval * 1000);
 });

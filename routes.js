@@ -1,38 +1,15 @@
 const router = require('express').Router();
-const fs = require('fs');
-const path = require('path');
-const md5 = require('crypto-js/md5');
-
 const { fork } = require('child_process');
+const Messages = require('./messages');
 
-let messages = [];
-let messagesModified = new Date().toUTCString();
-let messagesEtag = md5(JSON.stringify(messages));
+require('dotenv').config();
 
-function loadMessages() {
-  fs.readFile(
-    path.join(__dirname, 'data/messages.json'),
-    'utf8',
-    (err, messagesJson) => {
-      if (err) {
-        console.error(err);
-        messages = [];
-
-      } else {
-        messages = JSON.parse(messagesJson);
-        fs.stat('./data/messages.json', (err, stats) => {
-          messagesModified = stats.mtime;
-          messagesEtag = md5(JSON.stringify(messages));
-        });
-      }
-    }
-  );
-}
+const messages = new Messages();
 
 router.head('/api/messages', (req, res) => {
   const headers = {
-    'Last-Modified': messagesModified,
-    'ETag': messagesEtag,
+    'Last-Modified': messages.getLastModified(),
+    'ETag': messages.getEtag(),
     'Content-Type': 'application/json'
   };
   res.set(headers);
@@ -40,26 +17,27 @@ router.head('/api/messages', (req, res) => {
 });
 
 router.get('/api/messages', (req, res) => {
-  if (!messages || messages.length === 0) {
+  if (messages.getCount() === 0) {
     return res.status(404).send('Not found.');
   }
   const headers = {
-    'Last-Modified': messagesModified,
-    'ETag': messagesEtag,
+    'Last-Modified': messages.getLastModified(),
+    'ETag': messages.getEtag(),
     'Content-Type': 'application/json'
   };
   res.set(headers);
-  res.json(messages);
+  res.json(messages.getAll());
 });
 
 router.get('/api/messages/latest', (req, res) => {
-  if (!messages || messages.length === 0) {
+  if (messages.getCount() === 0) {
     return res.status(404).send('Not found.');
   }
-  const latestMessage = messages[messages.length - 1];
+  const message = messages.getLatest();
+  const msgLastModified = messages.getLastModified(message);
   const headers = {
-    'Last-Modified': latestMessage.modified ? new Date(latestMessage.modified) : new Date(latestMessage.timestamp),
-    'ETag': md5(latestMessage.content),
+    'Last-Modified': msgLastModified,
+    'ETag': messages.getEtag(message),
     'Content-Type': 'application/json'
   };
   res.set(headers);
@@ -67,17 +45,16 @@ router.get('/api/messages/latest', (req, res) => {
 });
 
 router.get('/api/messages/:id', (req, res) => {
-  for (let i = 0; i < messages.length; i++) {
-    if (messages[i].id === req.params.id) {
-      const msgLastModified = messages[i].modified ? new Date(messages[i].modified) : new Date(messages[i].timestamp);
-      const headers = {
-        'Last-Modified': msgLastModified.toUTCString(),
-        'ETag': md5(messages[i].content),
-        'Content-Type': 'application/json'
-      };
-      res.set(headers);
-      return res.json(messages[i]);
-    }
+  const message = messages.getById(req.params.id);
+  if (message) {
+    const msgLastModified = messages.getLastModified(message);
+    const headers = {
+      'Last-Modified': msgLastModified,
+      'ETag': messages.getEtag(message),
+      'Content-Type': 'application/json'
+    };
+    res.set(headers);
+    return res.json(message);
   }
   // if we make it here, no message with the given id was found
   res.writeHead(404, { 'Content-Type': 'text/html' });
@@ -85,6 +62,8 @@ router.get('/api/messages/:id', (req, res) => {
 });
 
 router.get('/', (req, res) => {
+  // console.log(req.app);
+  // fill this in with a helpful but discouraging landing page
   return res.send("'Sup.");
 });
 
@@ -98,10 +77,18 @@ router.get('/start', (req, res) => {
         req.app.locals.botProcess = null;
       });
 
+      req.app.locals.io.on('connection', socket => {
+        console.log(`client connected via web socket: ${socket.id}`);
+        // console.log(messages.getAll());
+        socket.emit('messages', JSON.stringify(messages.getAll()));
+      });
+
       req.app.locals.botProcess.on('message', appNotification => {
         const notification = JSON.parse(appNotification);
         if (notification.notify === 'messages modified') {
-          loadMessages();
+          messages.loadMessages();
+
+          req.app.locals.io.emit('messages', JSON.stringify(messages.getAll()));
         }
       });
     }
@@ -111,7 +98,7 @@ router.get('/start', (req, res) => {
 
   } else {
     console.log('Attept to start bot without valid key.');
-
+    console.log({ given: req.query.botkey, stored: process.env.BOTKEY });
     res.writeHead(403, { 'Content-Type': 'text/html' });
     return res.end('Forbidden.');
   }
@@ -136,7 +123,5 @@ router.get('/stop', (req, res) => {
     return res.end('Forbidden.');
   }
 });
-
-loadMessages();
 
 module.exports = router;
