@@ -93,6 +93,12 @@ router.post('/api/bot/start', (req, res) => {
           req.app.locals.io.emit('messages', JSON.stringify(messages.getAll()));
         }
       });
+
+      // and listen for new client connections
+      req.app.locals.io.on('connection', socket => {
+        messages.loadMessages();
+        socket.emit('messages', JSON.stringify(messages.getAll()));
+      });
     } else {
       console.log('Bot already running');
     }
