@@ -45,6 +45,7 @@ const getStatus = function () {
           statusEl.classList.remove('down');
           statusEl.classList.add('error');
           toggleEl.remove();
+          apiInputEl.remove();
           alert('Error: ' + status.message);
       }
     })
