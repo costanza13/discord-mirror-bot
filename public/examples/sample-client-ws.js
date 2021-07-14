@@ -8,11 +8,13 @@ const socket = io();
 // });
 
 const chatEl = document.querySelector('#chat');
-const loadingMsgPollEl = document.querySelector('#chat .loading-msg');
+const loadingMsgEl = document.querySelector('#chat .loading-msg');
+const notificationEl = document.querySelector('#chat .notification');
+
+let autoscroll = true;
 
 const updateMessages = function (messagesJson) {
   const messages = JSON.parse(messagesJson);
-  console.log(messages);
 
   const messagesEl = document.createElement('ul');
 
@@ -20,10 +22,13 @@ const updateMessages = function (messagesJson) {
   for (let i = 0; i < messages.length; i++) {
     const messageEl = document.createElement('li');
     if (messages[i].handle === lastHandle) {
-      messageEl.innerHTML = '&nbsp;&nbsp;' + messages[i].content;
+      messageEl.innerHTML = messages[i].content;
     } else {
       messageEl.innerHTML = '<span class="handle">' + messages[i].handle + ':</span> ' + messages[i].content;
     }
+    const postedDate = new Date(messages[i].timestamp);
+    // const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    messagesEl.setAttribute('title', postedDate.toLocaleString('en-US'));
     messagesEl.appendChild(messageEl);
     lastHandle = messages[i].handle;
   }
@@ -31,12 +36,16 @@ const updateMessages = function (messagesJson) {
   const oldMessagesEl = document.querySelector('#messages');
   if (oldMessagesEl) {
     oldMessagesEl.remove();
-  } else if (loadingMsgPollEl) {
-    loadingMsgPollEl.remove();
+  } else if (loadingMsgEl) {
+    loadingMsgEl.remove();
   }
 
   messagesEl.setAttribute('id', 'messages');
   chatEl.appendChild(messagesEl);
+
+  if (autoscroll) {
+    chatEl.scrollTop = chatEl.scrollHeight;
+  }
 
   return messages.length;
 };
@@ -46,7 +55,17 @@ socket.on('connect', () => {
 });
 
 socket.on('notify', (msg) => {
-  console.log(msg);
+  msg = JSON.parse(msg);
+  if (msg.status === 'stopped') {
+    notificationEl.textContent = msg.message;
+    notificationEl.classList.remove('hidden');
+  } else if (msg.status === 'started') {
+    notificationEl.textContent = msg.message;
+    setTimeout(function() {
+      notificationEl.classList.add('hidden');
+      notificationEl.textContent = '';
+    }, 2000);
+  }
 })
 
 socket.on('messages', (messages) => {

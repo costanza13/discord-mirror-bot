@@ -41,9 +41,10 @@ const loadMessageHistory = (guild, channel) => {
         .then(members => {
           // console.log(members);
           messages.forEach(message => {
+            // console.log(message);
             const nickname = members.get(message.author.id).nickname;
-            const handle = nickname ? nickname : message.author.username;
-            chatMessages.unshift({ id: message.id, timestamp: message.createdTimestamp, modified: message.editedTimestamp, handle, content: message.content });
+            message.handle = nickname ? nickname : message.author.username;
+            chatMessages.unshift({ id: message.id, timestamp: message.createdTimestamp, modified: message.editedTimestamp, handle: message.handle, content: message.content });
           });
           writeMessagesFile();
         })
@@ -131,13 +132,13 @@ const init = () => {
     // console.log(msg);
     if (msg.author.id != bot.user.id) {
       if (msg.content === 'ping-bot') {
-        msg.reply('pong');
-        msg.channel.send('pong');
+        msg.reply('pong-bot');
+        msg.channel.send('pong-bot');
       }
-      let handle = (msg.member.nickname) ? msg.member.nickname : msg.author.username;
-      // console.log(i + ': ' + handle + ' - ' + msg.content);
-      // msg.channel.send('Received: [' + handle + '] ' + msg.content);
-      storeMessage(msg.id, msg.createdTimestamp, handle, msg.content)
+      msg.handle = (msg.member.nickname) ? msg.member.nickname : msg.author.username;
+      // console.log(i + ': ' + msg.handle + ' - ' + msg.content);
+      // msg.channel.send('Received: [' + msg.handle + '] ' + msg.content);
+      storeMessage(msg.id, msg.createdTimestamp, msg.handle, msg.content)
         .catch(error => {
           console.error('Unable to store messages: ' + error);
         });

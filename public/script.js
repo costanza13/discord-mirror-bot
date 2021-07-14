@@ -79,6 +79,7 @@ const toggle = function (e) {
       } else {
         statusEl.textContent = 'ERROR';
         toggleEl.remove();
+        apiInputEl.remove();
       }
     })
     .catch(error => {

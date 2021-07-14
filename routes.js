@@ -83,6 +83,7 @@ router.post('/api/bot/start', (req, res) => {
       // watch for 'exit' signal from bot app
       req.app.locals.botProcess.on('exit', (code, signal) => {
         req.app.locals.botProcess = null;
+        req.app.locals.io.emit('notify', JSON.stringify({ status: 'stopped', message: 'Waiting for Discord connection...' }));
       });
 
       // once the bot is started, start listening for messages from it
@@ -98,6 +99,9 @@ router.post('/api/bot/start', (req, res) => {
       req.app.locals.io.on('connection', socket => {
         messages.loadMessages();
         socket.emit('messages', JSON.stringify(messages.getAll()));
+        if (!req.app.locals.botProcess) {
+          req.app.locals.io.emit('notify', JSON.stringify({ status: 'stopped', message: 'Waiting for Discord connection...' }));
+        }
       });
     } else {
       console.log('Bot already running');
@@ -110,6 +114,7 @@ router.post('/api/bot/start', (req, res) => {
   }
 
   if (req.app.locals.botProcess) {
+    req.app.locals.io.emit('notify', JSON.stringify({ status: 'started', message: 'Connected to Discord.' }));
     return res.json({ code: 1, message: 'Discord bot running.' });
   } else {
     return res.status(500).json({ code: -1, message: 'Unable to start Discord bot.' });

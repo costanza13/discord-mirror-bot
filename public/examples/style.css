@@ -3,6 +3,10 @@
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
+.hidden {
+  display: none;
+}
+
 .centered-xy {
   position: fixed;
   top: 50%;
@@ -38,9 +42,10 @@
   scroll-behavior: smooth;
 }
 
-#loading-msg {
+.loading-msg {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 200%;
+  font-weight: bold;
   color: #38678d;
 }
 
@@ -58,4 +63,16 @@ ul#messages li {
 .handle {
   font-weight: bold;
   color: rgb(29, 75, 173);
+}
+
+.notification {
+  background: rgb(255, 252, 178, 90%);
+  border: 1px solid #aaa;
+  border-radius: 10px;
+  color: #444;
+  font-size: 110%;
+  font-weight: bold;
+  line-height: 1.8;
+  padding: 2rem 1rem;
+  text-align: center;
 }

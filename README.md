@@ -43,7 +43,7 @@ The app also requires a recent version of [Node.js](https://nodejs.org/en/) (Dis
 
 * Clone this repository
 * Run `npm install` in the project root directory
-* Copy (or rename) the `.env.sample` file to `.env` and fill in the variables with your own values
+* Copy (or rename) the `sample.env` file to `.env` and fill in the variables with your own values
 
 ## Using the Application
 
