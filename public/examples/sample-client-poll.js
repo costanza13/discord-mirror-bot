@@ -5,8 +5,11 @@ let pollInterval = minPollInterval;  // initial polling interval, will be adjust
 let secondsSinceLastMessage = 0;
 let etag = '';
 
+let serverUp = true;
+
 const chatEl = document.querySelector('#chat');
 const loadingMsgPollEl = document.querySelector('#chat .loading-msg');
+const notificationEl = document.querySelector('#chat .notification');
 
 const loadMessages = function () {
   let headers;
@@ -49,21 +52,35 @@ const loadMessages = function () {
 const pollForMessages = function () {
   return fetch(serverBaseUrl + '/api/messages', { method: 'HEAD' })
     .then(response => {
-      // if there's an update...
-      if (response.headers.get('etag') !== etag) {
-        secondsSinceLastMessage = 0;  // reset time since latest message
-        pollInterval = minPollInterval;  // reset the polling interval (check more frequently)
-        // load the updated messages
-        loadMessages().then(len => {
-          chatEl.scrollTop = chatEl.scrollHeight;
-          etag = response.headers.get('etag');
-        });
-      // otherwise
+      if (response.status === 503) {
+        if (serverUp) {
+          serverUp = false;
+          pollInterval = maxPollInterval;  // slow it down
+          notificationEl.textContent = 'Waiting for service to reconnect...';
+          notificationEl.classList.remove('hidden');
+        }
       } else {
-        secondsSinceLastMessage += pollInterval; // track time since latest message
-        if (secondsSinceLastMessage > 30 * minPollInterval && pollInterval < maxPollInterval) {
-          // keep increasing the polling interval (stop at maxPollInterval) while no new messages are coming in
-          pollInterval += 2;
+        if (!serverUp) {
+          serverUp = true;
+          notificationEl.classList.add('hidden');
+          notificationEl.textContent = '';
+        }
+        // if there's an update...
+        if (response.headers.get('etag') !== etag) {
+          secondsSinceLastMessage = 0;  // reset time since latest message
+          pollInterval = minPollInterval;  // reset the polling interval (check more frequently)
+          // load the updated messages
+          loadMessages().then(len => {
+            chatEl.scrollTop = chatEl.scrollHeight;
+            etag = response.headers.get('etag');
+          });
+          // otherwise
+        } else {
+          secondsSinceLastMessage += pollInterval; // track time since latest message
+          if (secondsSinceLastMessage > 30 * minPollInterval && pollInterval < maxPollInterval) {
+            // keep increasing the polling interval (stop at maxPollInterval) while no new messages are coming in
+            pollInterval += 2;
+          }
         }
       }
       setTimeout(pollForMessages, pollInterval * 1000);

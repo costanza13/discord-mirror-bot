@@ -12,6 +12,9 @@ router.head('/api/messages', (req, res) => {
     'ETag': messages.getEtag(),
     'Content-Type': 'application/json'
   };
+  if (!req.app.locals.botProcess) {
+    res.status(503);
+  }
   res.set(headers);
   res.end();
 });
