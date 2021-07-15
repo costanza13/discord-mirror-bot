@@ -1,10 +1,7 @@
 const router = require('express').Router();
-const { fork } = require('child_process');
-const Messages = require('./messages');
+const botInit = require('./lib/bot-utils');
 
 require('dotenv').config();
-
-const messages = new Messages();
 
 router.head('/api/messages', (req, res) => {
   const headers = {
@@ -20,27 +17,27 @@ router.head('/api/messages', (req, res) => {
 });
 
 router.get('/api/messages', (req, res) => {
-  if (messages.getCount() === 0) {
+  if (req.app.locals.messages.getCount() === 0) {
     return res.status(404).send('Not found.');
   }
   const headers = {
-    'Last-Modified': messages.getLastModified(),
-    'ETag': messages.getEtag(),
+    'Last-Modified': req.app.locals.messages.getLastModified(),
+    'ETag': req.app.locals.messages.getEtag(),
     'Content-Type': 'application/json'
   };
   res.set(headers);
-  res.json(messages.getAll());
+  res.json(req.app.locals.messages.getAll());
 });
 
 router.get('/api/messages/latest', (req, res) => {
-  if (messages.getCount() === 0) {
+  if (req.app.locals.messages.getCount() === 0) {
     return res.status(404).send('Not found.');
   }
-  const message = messages.getLatest();
-  const msgLastModified = messages.getLastModified(message);
+  const message = req.app.locals.messages.getLatest();
+  const msgLastModified = req.app.locals.messages.getLastModified(message);
   const headers = {
     'Last-Modified': msgLastModified,
-    'ETag': messages.getEtag(message),
+    'ETag': req.app.locals.messages.getEtag(message),
     'Content-Type': 'application/json'
   };
   res.set(headers);
@@ -48,12 +45,12 @@ router.get('/api/messages/latest', (req, res) => {
 });
 
 router.get('/api/messages/:id', (req, res) => {
-  const message = messages.getById(req.params.id);
+  const message = req.app.locals.messages.getById(req.params.id);
   if (message) {
-    const msgLastModified = messages.getLastModified(message);
+    const msgLastModified = req.app.locals.messages.getLastModified(message);
     const headers = {
       'Last-Modified': msgLastModified,
-      'ETag': messages.getEtag(message),
+      'ETag': req.app.locals.messages.getEtag(message),
       'Content-Type': 'application/json'
     };
     res.set(headers);
@@ -81,31 +78,7 @@ router.post('/api/bot/start', (req, res) => {
     // only start if not already started
     if (!req.app.locals.botProcess) {
       console.log('Starting bot');
-
-      req.app.locals.botProcess = fork(__dirname + '/app');
-      // watch for 'exit' signal from bot app
-      req.app.locals.botProcess.on('exit', (code, signal) => {
-        req.app.locals.botProcess = null;
-        req.app.locals.io.emit('notify', JSON.stringify({ status: 'stopped', message: 'Waiting for Discord connection...' }));
-      });
-
-      // once the bot is started, start listening for messages from it
-      req.app.locals.botProcess.on('message', appNotification => {
-        const notification = JSON.parse(appNotification);
-        if (notification.notify === 'messages modified') {
-          messages.loadMessages();
-          req.app.locals.io.emit('messages', JSON.stringify(messages.getAll()));
-        }
-      });
-
-      // and listen for new client connections
-      req.app.locals.io.on('connection', socket => {
-        messages.loadMessages();
-        socket.emit('messages', JSON.stringify(messages.getAll()));
-        if (!req.app.locals.botProcess) {
-          req.app.locals.io.emit('notify', JSON.stringify({ status: 'stopped', message: 'Waiting for Discord connection...' }));
-        }
-      });
+      botInit(req.app.locals);
     } else {
       console.log('Bot already running');
     }

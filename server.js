@@ -2,11 +2,14 @@ const express = require('express');
 const app = express();
 require('dotenv').config();
 const routes = require('./routes');
+const Messages = require('./lib/messages');
+const botInit = require('./lib/bot-utils');
 
 const PORT = process.env.PORT || 80;
 
 app.locals.botProcess = null;
 app.locals.io = null;
+app.locals.messages = new Messages();
 
 // parse incoming string or array data
 app.use(express.urlencoded({ extended: true }));
@@ -22,9 +25,8 @@ app.use(function (req, res) {
 
 const server = require('http').createServer(app);
 app.locals.io = require('socket.io')(server);
-app.locals.io.on('connection', socket => {
-  console.log(`client connected via web socket: ${socket.id}`);
-});
+
+botInit(app.locals);
 
 server.listen(PORT, () => {
   console.log(`API server listening on port ${PORT}`);

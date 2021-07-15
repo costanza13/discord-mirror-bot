@@ -65,6 +65,10 @@ ul#messages li {
   color: rgb(29, 75, 173);
 }
 
+.mention {
+  color: rgb(175 66 1);
+  font-style: italic;}
+
 .notification {
   background: rgb(255, 252, 178, 90%);
   border: 1px solid #aaa;

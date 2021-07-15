@@ -20,6 +20,7 @@ const updateMessages = function (messagesJson) {
 
   let lastHandle = '';
   for (let i = 0; i < messages.length; i++) {
+    messages[i].content = messages[i].content.replaceAll(/<(@[^>]+)>/g, '<span class="mention">$1</span>');
     const messageEl = document.createElement('li');
     if (messages[i].handle === lastHandle) {
       messageEl.innerHTML = messages[i].content;
