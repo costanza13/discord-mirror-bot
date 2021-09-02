@@ -1,11 +1,8 @@
+// if your client is being served from the same host and port as your,
+// server you don't need to pass an argument to io(); if they are on
+// different hosts/ports, you must pass that information to io()
+// const socket = io('https://www.example.com:3001');
 const socket = io();
-// when connecting from techdirt.com, use
-// const socket = io("https://td-insider-discord.herokuapp.com/", {
-//   withCredentials: true,
-//   extraHeaders: {
-//     "my-custom-header": "abcd"
-//   }
-// });
 
 const chatEl = document.querySelector('#chat');
 const loadingMsgEl = document.querySelector('#chat .loading-msg');

@@ -24,7 +24,12 @@ app.use(function (req, res) {
 });
 
 const server = require('http').createServer(app);
-app.locals.io = require('socket.io')(server);
+app.locals.io = require('socket.io')(server, {
+  cors: {
+    origin: 'https://www.techdirt.com',
+    methods: ['GET'],
+  }
+});
 
 botInit(app.locals);
 

@@ -46,6 +46,10 @@ const loadMessageHistory = (channel) => {
 
 const prepMessage = msg => {
   // console.log('MESSAGE', msg);
+
+  // if there are mentions (@<nickname>), the message data includes them
+  // as @!<user.id>, so we have to find and replace them with the more
+  // readable nickname
   if (msg.mentions && msg.mentions.members.size) {
     msg.mentions.members.forEach(member => {
       const find = '@!' + member.user.id;
@@ -53,6 +57,9 @@ const prepMessage = msg => {
       msg.content = msg.content.replace(find, replacement);
     });
   }
+
+  // if the member (author of the message) has supplied a nickname, we'll
+  // use that as their "handle", otherwise, use their usename
   msg.handle = (msg.member.nickname) ? msg.member.nickname : msg.author.username;
   // console.log('HANDLE: ', msg.handle);
   return msg;
@@ -67,12 +74,10 @@ const storeMessage = (id, timestamp, handle, content) => {
 };
 
 const updateMessage = (id, modified, content) => {
-  for (let i = 0; i < chatMessages.length; i++) {
-    if (chatMessages[i].id === id) {
-      chatMessages[i].content = content;
-      chatMessages[i].modified = modified;
-      break;
-    }
+  const messageIndex = chatMessages.findIndex(message => message.id === id);
+  if (messageIndex !== -1) {
+    chatMessages[messageIndex].content = content;
+    chatMessages[messageIndex].modified = modified;
   }
   return writeMessagesFile();
 };

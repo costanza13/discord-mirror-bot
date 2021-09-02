@@ -37,6 +37,9 @@ app.js requires several environment variables to be set in order to run:
 
 Before running this app, you must set up a bot application on Discord and add it to a channel. Discord.js provides a very helpful [guide](https://discordjs.guide/) to get you started. In particular, the sections [Setting up a bot application](https://discordjs.guide/preparations/setting-up-a-bot-application.html) and [Adding your bot to servers](https://discordjs.guide/preparations/adding-your-bot-to-servers.html) will help you fulfill the prerequisites for running this app.
 
+### Note:
+Pay particular attention to the bot settings for your bot on the [Discord Developer Portal](https://discord.com/developers/applications).  In order for certain functions to work, your bot must have "Presence Intent" enabled. (This was a big headache for me.)
+
 The app also requires a recent version of [Node.js](https://nodejs.org/en/) (Discord.js requires at least Node 12.0).
 
 ## Installation
