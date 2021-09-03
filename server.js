@@ -26,7 +26,7 @@ app.use(function (req, res) {
 const server = require('http').createServer(app);
 app.locals.io = require('socket.io')(server, {
   cors: {
-    origin: 'https://www.techdirt.com',
+    origin: process.env.origin || `http://localhost:${PORT}`,
     methods: ['GET'],
   }
 });
