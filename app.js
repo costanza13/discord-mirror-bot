@@ -150,7 +150,7 @@ const init = () => {
         msg.channel.send('pong-bot');
       } else {
         msg = prepMessage(msg);
-        storeMessage(msg.id, msg.createdTimestamp, msg.handle, msg.content)
+        storeMessage(msg.id, msg.createdTimestamp, msg.handle, msg.content, msg.embeds)
           .catch(error => {
             console.error('Unable to store messages: ' + error);
           });
