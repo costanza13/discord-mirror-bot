@@ -1,6 +1,6 @@
 // if your client is being served from the same host and port as your,
 // server you don't need to pass an argument to io(); if they are on
-// different hosts/ports, you must pass that information to io()
+// different hosts/ports, you must pass that information to io(), e.g.,
 // const socket = io('https://www.example.com:3001');
 const socket = io();
 
@@ -17,7 +17,17 @@ const updateMessages = function (messagesJson) {
 
   let lastHandle = '';
   for (let i = 0; i < messages.length; i++) {
+    // format @mentions
     messages[i].content = messages[i].content.replaceAll(/<(@[^>]+)>/g, '<span class="mention">$1</span>');
+
+    // replace embed urls with a linked token
+    if (messages[i].embeds && messages[i].embeds.length) {
+      messages[i].embeds.forEach(embed => {
+        const search = new RegExp(embed.url, 'g');
+        messages[i].content = messages[i].content.replace(search, `<a href="${embed.url}">[${embed.type}]</a>`);
+      });
+    }
+
     const messageEl = document.createElement('li');
     if (messages[i].handle === lastHandle) {
       messageEl.innerHTML = messages[i].content;
@@ -34,7 +44,9 @@ const updateMessages = function (messagesJson) {
   const oldMessagesEl = document.querySelector('#messages');
   if (oldMessagesEl) {
     oldMessagesEl.remove();
-  } else if (loadingMsgEl) {
+  }
+
+  if (loadingMsgEl) {
     loadingMsgEl.remove();
   }
 
@@ -59,7 +71,7 @@ socket.on('notify', (msg) => {
     notificationEl.classList.remove('hidden');
   } else if (msg.status === 'started') {
     notificationEl.textContent = msg.message;
-    setTimeout(function() {
+    setTimeout(function () {
       notificationEl.classList.add('hidden');
       notificationEl.textContent = '';
     }, 2000);

@@ -36,7 +36,13 @@ const loadMessageHistory = (channel) => {
     .then(messages => {
       messages.forEach(message => {
         message = prepMessage(message);
-        chatMessages.unshift({ id: message.id, timestamp: message.createdTimestamp, modified: message.editedTimestamp, handle: message.handle, content: message.content });
+        const embedsInfo = (message.embeds && message.embeds.length) ?
+        message.embeds.map(embed => {
+          const { type, url } = embed;
+          return { type, url }
+        }) : [];
+      
+        chatMessages.unshift({ id: message.id, timestamp: message.createdTimestamp, modified: message.editedTimestamp, handle: message.handle, content: message.content, embeds: embedsInfo });
       });
       writeMessagesFile()
         .catch(console.error);
@@ -62,11 +68,18 @@ const prepMessage = msg => {
   // use that as their "handle", otherwise, use their usename
   msg.handle = (msg.member.nickname) ? msg.member.nickname : msg.author.username;
   // console.log('HANDLE: ', msg.handle);
+
   return msg;
 }
 
-const storeMessage = (id, timestamp, handle, content) => {
-  chatMessages.push({ id, timestamp, modified: 0, handle, content });
+const storeMessage = (id, timestamp, handle, content, embeds) => {
+  const embedsInfo = (embeds && embeds.length) ?
+  embeds.map(embed => {
+    const { type, url } = embed;
+    return { type, url }
+  }) : [];
+
+  chatMessages.push({ id, timestamp, modified: 0, handle, content, embeds: embedsInfo });
   while (chatMessages.length > MESSAGE_LIMIT) {
     chatMessages.shift();  // shift off the oldest message
   }
@@ -170,6 +183,36 @@ init();
 
 
 /*
+
+EMBEDS [
+  MessageEmbed {
+    type: 'gifv',
+    title: null,
+    description: null,
+    url: 'https://tenor.com/view/the-muppets-kermit-the-frog-smh-shake-my-head-no-gif-4883582',
+    color: null,
+    timestamp: null,
+    fields: [],
+    thumbnail: {
+      url: 'https://media.tenor.co/images/1875ed68b9c7a40482a1eece1cb56aff/raw',
+      proxyURL: 'https://images-ext-1.discordapp.net/external/JrOEdA0DP07DcZCbHebqjj_3evMF3ii9pFA-Mio0vek/https/media.tenor.co/images/1875ed68b9c7a40482a1eece1cb56aff/raw',
+      height: 304,
+      width: 540
+    },
+    image: null,
+    video: {
+      url: 'https://media.tenor.co/videos/d86721f2a1771126e4548257639770ab/mp4',
+      proxyURL: undefined,
+      height: 304,
+      width: 540
+    },
+    author: null,
+    provider: { name: 'Tenor', url: 'Tenor' },
+    footer: null,
+    files: []
+  }
+]
+
 <ref *2> Message {
   channel: <ref *1> TextChannel {
     type: 'text',

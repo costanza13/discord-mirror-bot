@@ -27,6 +27,17 @@ const loadMessages = function () {
         const messagesEl = document.createElement('ul');
         let lastHandle = '';
         for (let i = 0; i < messages.length; i++) {
+          // format @mentions
+          messages[i].content = messages[i].content.replaceAll(/<(@[^>]+)>/g, '<span class="mention">$1</span>');
+
+          // replace embed urls with a linked token
+          if (messages[i].embeds && messages[i].embeds.length) {
+            messages[i].embeds.forEach(embed => {
+              const search = new RegExp(embed.url, 'g');
+              messages[i].content = messages[i].content.replace(search, `<a href="${embed.url}">[${embed.type}]</a>`);
+            });
+          }
+
           const messageEl = document.createElement('li');
           if (messages[i].handle === lastHandle) {
             messageEl.innerHTML = '&nbsp;&nbsp;' + messages[i].content;
