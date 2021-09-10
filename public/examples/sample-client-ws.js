@@ -10,6 +10,20 @@ const notificationEl = document.querySelector('#chat .notification');
 
 let autoscroll = true;
 
+const truncateUrls = text => {
+  // replace URLs not in an href attribute with a shortened version, linked to the full url
+  let returnText = text;
+  text = text.replaceAll(/<a href="[^"]+".*?>/g, '<a href="">');
+  const linkRegexp = /https?:\/\/\S+/g;
+  const linksToTruncate = [...text.matchAll(linkRegexp)];
+  linksToTruncate.forEach(link => {
+    const replacement = `<a href="${link[0]}">${link[0].length > 32 ? link[0].substr(0, 32) + '...' : link[0]}</a>`;
+    returnText = returnText.replace(link[0], replacement);
+  });
+
+  return returnText;
+};
+
 const updateMessages = function (messagesJson) {
   const messages = JSON.parse(messagesJson);
 
@@ -27,6 +41,8 @@ const updateMessages = function (messagesJson) {
         messages[i].content = messages[i].content.replace(search, `<a href="${embed.url}">[${embed.type}]</a>`);
       });
     }
+
+    messages[i].content = truncateUrls(messages[i].content);
 
     const messageEl = document.createElement('li');
     if (messages[i].handle === lastHandle) {
@@ -53,12 +69,38 @@ const updateMessages = function (messagesJson) {
   messagesEl.setAttribute('id', 'messages');
   chatEl.appendChild(messagesEl);
 
-  if (autoscroll) {
-    chatEl.scrollTop = chatEl.scrollHeight;
-  }
+  // wrap in setTimeout to be sure element finishes painting before we grab the height
+  setTimeout(function () {
+    if (autoscroll) {
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+  }, 200);
 
   return messages.length;
 };
+
+const setAutoscroll = () => {
+  const messagesEl = document.querySelector('#messages');
+  if (messagesEl) {
+
+    const scrollTop = chatEl.scrollTop;
+    const scrollHeight = chatEl.scrollHeight;
+    const viewableHeight = chatEl.clientHeight;
+
+    if (autoscroll && (scrollTop < scrollPosition) && (scrollHeight - Math.abs(scrollTop) - viewableHeight >= 10)) {
+      autoscroll = false;
+      console.log(autoscroll);
+    } else if ((scrollHeight - scrollTop - viewableHeight) < 10) {
+      autoscroll = true;
+      console.log(autoscroll);
+    }
+
+    scrollPosition = scrollTop;
+  }
+};
+
+// enable/disable autoscrolling when user scrolls the chat pane
+chatEl.addEventListener('scroll', setAutoscroll);
 
 socket.on('connect', () => {
   console.log(`connected to server with socket id: ${socket.id}`);
