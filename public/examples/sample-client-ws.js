@@ -51,7 +51,6 @@ const updateMessages = function (messagesJson) {
       messageEl.innerHTML = '<span class="handle">' + messages[i].handle + ':</span> ' + messages[i].content;
     }
     const postedDate = new Date(messages[i].timestamp);
-    // const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     messagesEl.setAttribute('title', postedDate.toLocaleString('en-US'));
     messagesEl.appendChild(messageEl);
     lastHandle = messages[i].handle;
