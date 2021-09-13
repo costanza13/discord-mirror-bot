@@ -5,8 +5,8 @@ require('dotenv').config();
 
 router.head('/api/messages', (req, res) => {
   const headers = {
-    'Last-Modified': messages.getLastModified(),
-    'ETag': messages.getEtag(),
+    'Last-Modified': req.app.locals.messages.getLastModified(),
+    'ETag': req.app.locals.messages.getEtag(),
     'Content-Type': 'application/json'
   };
   if (!req.app.locals.botProcess) {

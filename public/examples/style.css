@@ -57,12 +57,13 @@ ul#messages {
 }
 
 ul#messages li {
-  padding: 5px;
+  margin: 5px;
 }
 
 .handle {
   font-weight: bold;
   color: rgb(29, 75, 173);
+  margin-left: -5px;
 }
 
 .mention {
