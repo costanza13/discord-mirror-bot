@@ -65,7 +65,13 @@ Two examples are provided in the `/public/examples` folder, demonstrating how th
 - Web Sockets: `socket-ex.html` and `sample-client-ws.js` show how to set up an embed to receive updates via web socket connections.
 
 ## Future Development
-To turn this app into a fully functional Discord embed requires the ability to send messages to Discord via the app. Just sending messages as the bot user is fairly straightforward. However, allowing users to submit their own messages directly through the embed means providing a way for them to authenticate. This is definitely possible, though it was beyond the scope of the initial goal of this app.
+* To turn this app into a fully functional Discord embed requires the ability to send messages to Discord via the app. Just sending messages as the bot user is fairly straightforward. However, allowing users to submit their own messages directly through the embed means providing a way for them to authenticate. This is definitely possible, though it was beyond the scope of the initial goal of this app.
+
+* It would also be useful to have the option to restrict access--both read and write--to the mirrored chat.  This would also require some form of authentication.  Possibilites include requiring the user to sign into Discord through the embed (restrict access to guild members) or requiring a token granted by the bot server, tied to the embedding site.
+
+* The decision to use a local (to the app) file as the message store was made to keep the app both simple to speed development and to operate within Heroku's free tier.  Replacing the JSON messages file with a database (like MongoDB) would make it more robust and flexible.
+
+* Another potentially useful feature would be to allow configuration through a web interface, instead of requiring that environment variables be set on the server. This would allow the server to be deployed as-is, and then the bot/Discord connection information could be supplied afterward. Such a setup would also provide the basis for a single server to support multiple simultaneous bots, connected to different Discord servers/channels.
 
 ## Credits
 
