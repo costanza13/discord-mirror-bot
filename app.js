@@ -37,11 +37,11 @@ const loadMessageHistory = (channel) => {
       messages.forEach(message => {
         message = prepMessage(message);
         const embedsInfo = (message.embeds && message.embeds.length) ?
-        message.embeds.map(embed => {
-          const { type, url } = embed;
-          return { type, url }
-        }) : [];
-      
+          message.embeds.map(embed => {
+            const { type, url } = embed;
+            return { type, url }
+          }) : [];
+
         chatMessages.unshift({ id: message.id, timestamp: message.createdTimestamp, modified: message.editedTimestamp, handle: message.handle, content: message.content, embeds: embedsInfo });
       });
       writeMessagesFile()
@@ -74,10 +74,10 @@ const prepMessage = msg => {
 
 const storeMessage = (id, timestamp, handle, content, embeds) => {
   const embedsInfo = (embeds && embeds.length) ?
-  embeds.map(embed => {
-    const { type, url } = embed;
-    return { type, url }
-  }) : [];
+    embeds.map(embed => {
+      const { type, url } = embed;
+      return { type, url }
+    }) : [];
 
   chatMessages.push({ id, timestamp, modified: 0, handle, content, embeds: embedsInfo });
   while (chatMessages.length > MESSAGE_LIMIT) {
@@ -141,40 +141,48 @@ const init = () => {
   });
 
 
-  let i = 0;
   bot.on('message', msg => {
     // console.log(msg);
-    if (msg.author.id != bot.user.id) {
-      if (msg.content === 'ping-bot') {
-        msg.reply('pong-bot');
-        msg.channel.send('pong-bot');
-      } else {
-        msg = prepMessage(msg);
-        storeMessage(msg.id, msg.createdTimestamp, msg.handle, msg.content, msg.embeds)
-          .catch(error => {
-            console.error('Unable to store messages: ' + error);
-          });
+    // ignore messages not from the specified channel
+    if (msg.channel.id === CHANNEL_ID) {
+      // ignore messages sent by bot, to avoid feedback loops
+      if (msg.author.id != bot.user.id) {
+        if (msg.content === 'ping-bot') {
+          msg.reply('pong-bot');
+          msg.channel.send('pong-bot');
+        } else {
+          msg = prepMessage(msg);
+          storeMessage(msg.id, msg.createdTimestamp, msg.handle, msg.content, msg.embeds)
+            .catch(error => {
+              console.error('Unable to store messages: ' + error);
+            });
+        }
       }
     }
-    i++;
   });
 
   bot.on('messageUpdate', (oldMsg, newMsg) => {
     // console.log('old: ', oldMsg);
     // console.log('new: ', newMsg);
-    newMsg = prepMessage(newMsg);
-    updateMessage(newMsg.id, newMsg.editedTimestamp, newMsg.content)
-      .catch(error => {
-        console.error('Unable to store messages: ' + error);
-      });
+    // ignore messages not from the specified channel
+    if (newMsg.channel.id === CHANNEL_ID) {
+      newMsg = prepMessage(newMsg);
+      updateMessage(newMsg.id, newMsg.editedTimestamp, newMsg.content)
+        .catch(error => {
+          console.error('Unable to store messages: ' + error);
+        });
+    }
   });
 
   bot.on('messageDelete', (msg) => {
     // console.log('delete: ', msg);
-    deleteMessage(msg.id)
-      .catch(error => {
-        console.error('Unable to store messages: ' + error);
-      });
+    // ignore messages not from the specified channel
+    if (msg.channel.id === CHANNEL_ID) {
+      deleteMessage(msg.id)
+        .catch(error => {
+          console.error('Unable to store messages: ' + error);
+        });
+    }
   });
 
 }

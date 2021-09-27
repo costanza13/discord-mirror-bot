@@ -8,6 +8,8 @@ const chatEl = document.querySelector('#chat');
 const loadingMsgEl = document.querySelector('#chat .loading-msg');
 const notificationEl = document.querySelector('#chat .notification');
 
+let initialLoad = true;
+let scrollPosition = chatEl.scrollTop;
 let autoscroll = true;
 
 const truncateUrls = text => {
@@ -51,7 +53,18 @@ const updateMessages = function (messagesJson) {
       messageEl.innerHTML = '<span class="handle">' + messages[i].handle + ':</span> ' + messages[i].content;
     }
     const postedDate = new Date(messages[i].timestamp);
-    messagesEl.setAttribute('title', postedDate.toLocaleString('en-US'));
+    messageEl.setAttribute('title', postedDate.toLocaleString('en-US'));
+
+    if (i === messages.length - 2) {
+      // root is a parent of the target element
+      let observer = new IntersectionObserver(function (entries, observer) {
+        setAutoscroll(entries[0].isIntersecting);
+      }, { root: chatEl });
+
+      // observing a target element
+      observer.observe(messageEl);
+    }
+
     messagesEl.appendChild(messageEl);
     lastHandle = messages[i].handle;
   }
@@ -72,34 +85,20 @@ const updateMessages = function (messagesJson) {
   setTimeout(function () {
     if (autoscroll) {
       chatEl.scrollTop = chatEl.scrollHeight;
+      initialLoad = false;
     }
   }, 200);
 
   return messages.length;
 };
 
-const setAutoscroll = () => {
+const setAutoscroll = (enable) => {
   const messagesEl = document.querySelector('#messages');
-  if (messagesEl) {
-
-    const scrollTop = chatEl.scrollTop;
-    const scrollHeight = chatEl.scrollHeight;
-    const viewableHeight = chatEl.clientHeight;
-
-    if (autoscroll && (scrollTop < scrollPosition) && (scrollHeight - Math.abs(scrollTop) - viewableHeight >= 10)) {
-      autoscroll = false;
-      console.log(autoscroll);
-    } else if ((scrollHeight - scrollTop - viewableHeight) < 10) {
-      autoscroll = true;
-      console.log(autoscroll);
-    }
-
-    scrollPosition = scrollTop;
-  }
+  autoscroll = messagesEl && (initialLoad || enable);
 };
 
 // enable/disable autoscrolling when user scrolls the chat pane
-chatEl.addEventListener('scroll', setAutoscroll);
+// chatEl.addEventListener('scroll', setAutoscroll);
 
 socket.on('connect', () => {
   console.log(`connected to server with socket id: ${socket.id}`);
