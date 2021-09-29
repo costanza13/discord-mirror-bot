@@ -11,6 +11,7 @@ const chatEl = document.querySelector('#chat');
 const loadingMsgPollEl = document.querySelector('#chat .loading-msg');
 const notificationEl = document.querySelector('#chat .notification');
 
+let initialLoad = true;
 let autoscroll = true;
 
 const truncateUrls = text => {
@@ -61,7 +62,18 @@ const loadMessages = function () {
             messageEl.innerHTML = '<span class="handle">' + messages[i].handle + ':</span> ' + messages[i].content;
           }
           const postedDate = new Date(messages[i].timestamp);
-          messagesEl.setAttribute('title', postedDate.toLocaleString('en-US'));
+          messageEl.setAttribute('title', postedDate.toLocaleString('en-US'));
+
+          if (i === messages.length - 2) {
+            // root is a parent of the target element
+            let observer = new IntersectionObserver(function (entries, observer) {
+              setAutoscroll(entries[0].isIntersecting);
+            }, { root: chatEl });
+
+            // observing a target element
+            observer.observe(messageEl);
+          }
+
           messagesEl.appendChild(messageEl);
           lastHandle = messages[i].handle;
         }
@@ -126,33 +138,38 @@ const pollForMessages = function () {
     .catch(error => console.error(error));
 }
 
-const setAutoscroll = () => {
-  const messagesEl = document.querySelector('#messages');
-  if (messagesEl) {
+// set the client-specific name of the "hidden" property and the change event for visibility
+let hidden, visibilityChange;
+if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+  hidden = "hidden";
+  visibilityChange = "visibilitychange";
+} else if (typeof document.msHidden !== "undefined") {
+  hidden = "msHidden";
+  visibilityChange = "msvisibilitychange";
+} else if (typeof document.webkitHidden !== "undefined") {
+  hidden = "webkitHidden";
+  visibilityChange = "webkitvisibilitychange";
+}
 
-    const scrollTop = chatEl.scrollTop;
-    const scrollHeight = chatEl.scrollHeight;
-    const viewableHeight = chatEl.clientHeight;
+let freezeAutoscroll = false;
+// if the page is hidden, don't allow autoscroll state change
+function handleVisibilityChange() {
+  freezeAutoscroll = !!document[hidden];
+}
+document.addEventListener(visibilityChange, handleVisibilityChange, false);
 
-    if (autoscroll && (scrollTop < scrollPosition) && (scrollHeight - Math.abs(scrollTop) - viewableHeight >= 10)) {
-      autoscroll = false;
-      console.log(autoscroll);
-    } else if ((scrollHeight - scrollTop - viewableHeight) < 10) {
-      autoscroll = true;
-      console.log(autoscroll);
-    }
-
-    scrollPosition = scrollTop;
+const setAutoscroll = (enable) => {
+  if (!freezeAutoscroll) {
+    const messagesEl = document.querySelector('#messages');
+    autoscroll = messagesEl && (initialLoad || enable);
   }
 };
-
-// enable/disable autoscrolling when user scrolls the chat pane
-chatEl.addEventListener('scroll', setAutoscroll);
 
 // start by grabbing the messages and kicking off the polling
 loadMessages().then((len) => {
   if (len > 0) {
     chatEl.scrollTop = chatEl.scrollHeight;
+    initialLoad = false;
   }
   // start polling for new messages
   setTimeout(pollForMessages, pollInterval * 1000);

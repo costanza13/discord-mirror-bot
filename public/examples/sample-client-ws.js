@@ -9,7 +9,6 @@ const loadingMsgEl = document.querySelector('#chat .loading-msg');
 const notificationEl = document.querySelector('#chat .notification');
 
 let initialLoad = true;
-let scrollPosition = chatEl.scrollTop;
 let autoscroll = true;
 
 const truncateUrls = text => {
@@ -92,13 +91,32 @@ const updateMessages = function (messagesJson) {
   return messages.length;
 };
 
-const setAutoscroll = (enable) => {
-  const messagesEl = document.querySelector('#messages');
-  autoscroll = messagesEl && (initialLoad || enable);
-};
+// Set the name of the hidden property and the change event for visibility
+let hidden, visibilityChange;
+if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+  hidden = "hidden";
+  visibilityChange = "visibilitychange";
+} else if (typeof document.msHidden !== "undefined") {
+  hidden = "msHidden";
+  visibilityChange = "msvisibilitychange";
+} else if (typeof document.webkitHidden !== "undefined") {
+  hidden = "webkitHidden";
+  visibilityChange = "webkitvisibilitychange";
+}
 
-// enable/disable autoscrolling when user scrolls the chat pane
-// chatEl.addEventListener('scroll', setAutoscroll);
+let freezeAutoscroll = false;
+// if the page is hidden, don't allow autoscroll state change
+function handleVisibilityChange() {
+  freezeAutoscroll = !!document[hidden];
+}
+document.addEventListener(visibilityChange, handleVisibilityChange, false);
+
+const setAutoscroll = (enable) => {
+  if (!freezeAutoscroll) {
+    const messagesEl = document.querySelector('#messages');
+    autoscroll = messagesEl && (initialLoad || enable);
+  }
+};
 
 socket.on('connect', () => {
   console.log(`connected to server with socket id: ${socket.id}`);
