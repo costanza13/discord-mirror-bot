@@ -10,9 +10,12 @@ const GUILD_ID = process.env.GUILD_ID;
 const CHANNEL_ID = process.env.CHANNEL_ID;
 const MESSAGE_LIMIT = process.env.MESSAGE_LIMIT || 200;
 
+let intents = new Discord.Intents(Discord.Intents.NON_PRIVILEGED);
+intents.add('GUILD_MEMBERS');
 const bot = new Discord.Client();
-const guildMembers = new Map();
+
 let channel;
+let membersMap;
 
 let chatMessages = [];
 
@@ -59,7 +62,7 @@ const prepMessage = msg => {
   if (msg.mentions && msg.mentions.members.size) {
     msg.mentions.members.forEach(member => {
       const find = '@!' + member.user.id;
-      const replacement = '@' + member.nickname;
+      const replacement = '@' + membersMap.get(member.user.id);
       msg.content = msg.content.replace(find, replacement);
     });
   }
@@ -127,6 +130,19 @@ const init = () => {
 
   bot.on('ready', () => {
     console.info(`Logged in as ${bot.user.tag}!`);
+
+    bot.guilds.fetch(GUILD_ID, false, true)
+      .then(guild => {
+        return guild.members.fetch();
+      })
+      .then(guildMembers => {
+        membersArr = guildMembers.map(member => {
+          return [member.user.id, (member.nickname ? member.nickname : member.user.username)];
+        });
+        membersMap = new Map(membersArr);
+      })
+      .catch(console.log);
+
     bot.channels.fetch(CHANNEL_ID)
       .then(channelData => {
         channel = channelData;
