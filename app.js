@@ -54,15 +54,18 @@ const loadMessageHistory = (channel) => {
 };
 
 const prepMessage = msg => {
-  // console.log('MESSAGE', msg);
+  console.log('MESSAGE', msg.content, msg.mentions);
 
   // if there are mentions (@<nickname>), the message data includes them
   // as @!<user.id>, so we have to find and replace them with the more
   // readable nickname
   if (msg.mentions && msg.mentions.members.size) {
     msg.mentions.members.forEach(member => {
-      const find = '@!' + member.user.id;
+      let find = '@!' + member.user.id;
       const replacement = '@' + membersMap.get(member.user.id);
+      msg.content = msg.content.replace(find, replacement);
+      // doing this second replace because it looks like sometimes discord doesn't put the ! in the @<user id> mention
+      find = '@' + member.user.id;
       msg.content = msg.content.replace(find, replacement);
     });
   }
@@ -70,6 +73,7 @@ const prepMessage = msg => {
   // if the member (author of the message) has supplied a nickname, we'll
   // use that as their "handle", otherwise, use their usename
   msg.handle = (msg.member.nickname) ? msg.member.nickname : msg.author.username;
+  membersMap.set(msg.author.id, msg.handle);
   // console.log('HANDLE: ', msg.handle);
 
   return msg;
@@ -140,10 +144,11 @@ const init = () => {
           return [member.user.id, (member.nickname ? member.nickname : member.user.username)];
         });
         membersMap = new Map(membersArr);
+        console.log('MEMBERSMAP', membersMap);
       })
-      .catch(console.log);
-
-    bot.channels.fetch(CHANNEL_ID)
+      .then(() => {
+        return bot.channels.fetch(CHANNEL_ID);
+      })
       .then(channelData => {
         channel = channelData;
         // console.log('Channel: ', channel);
@@ -153,7 +158,8 @@ const init = () => {
         // inform the server that messages are loaded
         process.send !== undefined && process.send(JSON.stringify({ notify: 'messages modified' }));
       })
-      .catch(console.error);
+      .catch(console.log);
+
   });
 
 
