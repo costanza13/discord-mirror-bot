@@ -21,7 +21,7 @@ const truncateUrls = text => {
   const linkRegexp = /https?:\/\/\S+/g;
   const linksToTruncate = [...text.matchAll(linkRegexp)];
   linksToTruncate.forEach(link => {
-    const replacement = `<a href="${link[0]}">${link[0].length > 32 ? link[0].substr(0, 32) + '...' : link[0]}</a>`;
+    const replacement = `<a href="${link[0]}" target="_blank">${link[0].length > 32 ? link[0].substr(0, 32) + '...' : link[0]}</a>`;
     returnText = returnText.replace(link[0], replacement);
   });
 
@@ -48,8 +48,7 @@ const loadMessages = function () {
           // replace embed urls with a linked token
           if (messages[i].embeds && messages[i].embeds.length) {
             messages[i].embeds.forEach(embed => {
-              const search = new RegExp(embed.url, 'g');
-              messages[i].content = messages[i].content.replace(search, `<a href="${embed.url}">[${embed.type}]</a>`);
+              messages[i].content = messages[i].content.replaceAll(embed.url, `<a href="${embed.url}" target="_blank">[${embed.type}]</a>`);
             });
           }
 
