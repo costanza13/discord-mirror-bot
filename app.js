@@ -54,7 +54,7 @@ const loadMessageHistory = (channel) => {
 };
 
 const prepMessage = msg => {
-  console.log('MESSAGE', msg.content, msg.mentions);
+  // console.log('MESSAGE', msg.content, msg.mentions);
 
   // if there are mentions (@<nickname>), the message data includes them
   // as @!<user.id>, so we have to find and replace them with the more
