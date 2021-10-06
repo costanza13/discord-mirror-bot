@@ -127,7 +127,21 @@ const init = () => {
 
   bot.on('ready', () => {
     console.info(`Logged in as ${bot.user.tag}!`);
-    bot.channels.fetch(CHANNEL_ID)
+
+    bot.guilds.fetch(GUILD_ID, false, true)
+      .then(guild => {
+        return guild.members.fetch();
+      })
+      .then(guildMembers => {
+        membersArr = guildMembers.map(member => {
+          return [member.user.id, (member.nickname ? member.nickname : member.user.username)];
+        });
+        membersMap = new Map(membersArr);
+        // console.log('MEMBERSMAP', membersMap);
+      })
+      .then(() => {
+        return bot.channels.fetch(CHANNEL_ID);
+      })
       .then(channelData => {
         channel = channelData;
         // console.log('Channel: ', channel);

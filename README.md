@@ -17,8 +17,8 @@ The server (Express) provides the following routes:
 
 server.js expects the following environment/config variables:
 
-* PORT=[port #] - web server port (e.g., for dev environment)
-* BOTKEY=[your-app-stop-and-start-key] - to restrict stopping & starting of bot app
+* `PORT=[port #]` - web server port (e.g., for dev environment)
+* `BOTKEY=[your-app-stop-and-start-key]` - to restrict stopping & starting of bot app
 
 ## app.js
 Uses the [Discord.js](https://www.npmjs.com/package/discord.js) NPM module to connect to Discord and listen for message-related events. The events supported include:
@@ -46,7 +46,15 @@ The app also requires a recent version of [Node.js](https://nodejs.org/en/) (Dis
 
 * Clone this repository
 * Run `npm install` in the project root directory
-* Copy (or rename) the `sample.env` file to `.env` and fill in the variables with your own values
+* Set environment variables:
+  * To run locally: Copy (or rename) the `sample.env` file to `.env` and fill in the variables with your own values
+  * In production environment: set the variables described above:
+      - `PORT`
+      - `BOTKEY`
+      - `MESSAGE_LIMIT`
+      - `TOKEN`
+      - `GUILD_ID`
+      - `CHANNEL_ID`
 
 ## Using the Application
 
@@ -61,11 +69,11 @@ to have it start the Discord connection.
 
 ### Examples
 Two examples are provided in the `/public/examples` folder, demonstrating how the application can be integrated into a website.
-- Polling: consisting of `poll-ex.html` and `sample-client-poll.js`, is an example of how to embed a Discord chat using polling to check for updates.
-- Web Sockets: `socket-ex.html` and `sample-client-ws.js` show how to set up an embed to receive updates via web socket connections.
+- Polling: consisting of `polling-example.html` and `polling-example.js`, is an example of how to embed a Discord chat using polling to check for updates.
+- Web Sockets: `websockets-example.html` and `websockets-example.js` show how to set up an embed to receive updates via web socket connections.
 
 ## Future Development
-* To turn this app into a fully functional Discord embed requires the ability to send messages to Discord via the app. Just sending messages as the bot user is fairly straightforward. However, allowing users to submit their own messages directly through the embed means providing a way for them to authenticate. This is definitely possible, though it was beyond the scope of the initial goal of this app.
+* To turn this app into a fully functional Discord embed requires the ability to send messages to Discord via the app. Just sending messages as the bot user is fairly straightforward. However, allowing users to submit their own messages directly through the embed means providing a way for them to authenticate. This is possible, though it was beyond the scope of the initial intended use of this app.
 
 * It would also be useful to have the option to restrict access--both read and write--to the mirrored chat.  This would also require some form of authentication.  Possibilites include requiring the user to sign into Discord through the embed (restrict access to guild members) or requiring a token granted by the bot server, tied to the embedding site.
 
