@@ -17,11 +17,11 @@ let autoscroll = true;
 const truncateUrls = text => {
   // replace URLs not in an href attribute with a shortened version, linked to the full url
   let returnText = text;
-  text = text.replaceAll(/<a href="[^"]+".*?>/g, '<a href="">');
+  text = text.replaceAll(/<a .*?>.*?<\/a>/g, '<a href="">');
   const linkRegexp = /https?:\/\/\S+/g;
   const linksToTruncate = [...text.matchAll(linkRegexp)];
   linksToTruncate.forEach(link => {
-    const replacement = `<a href="${link[0]}" target="_blank">${link[0].length > 32 ? link[0].substr(0, 32) + '...' : link[0]}</a>`;
+    const replacement = `<a href="${link[0]}" target="_blank"> ${link[0].length > 32 ? link[0].substr(0, 32) + '...<div class="msg-link">' + link[0] + '</div>' : link[0]}</a>`;
     returnText = returnText.replace(link[0], replacement);
   });
 
@@ -48,17 +48,18 @@ const loadMessages = function () {
           // replace embed urls with a linked token
           if (messages[i].embeds && messages[i].embeds.length) {
             messages[i].embeds.forEach(embed => {
-              messages[i].content = messages[i].content.replaceAll(embed.url, `<a href="${embed.url}" target="_blank">[${embed.type}]</a>`);
+              messages[i].content = messages[i].content.replaceAll(embed.url, `<a href="${embed.url}" target="_blank">[${embed.type}]<div class="msg-link">${embed.url}</div></a>`);
             });
           }
 
           messages[i].content = truncateUrls(messages[i].content);
 
           const messageEl = document.createElement('li');
+          messageEl.classList.add('msg');
           if (messages[i].handle === lastHandle) {
-            messageEl.innerHTML = messages[i].content;
+            messageEl.innerHTML = `<span class="msg-text">${messages[i].content}</span>`;
           } else {
-            messageEl.innerHTML = '<span class="handle">' + messages[i].handle + ':</span> ' + messages[i].content;
+            messageEl.innerHTML = `<span class="handle">${messages[i].handle}:</span> <span class="msg-text">${messages[i].content}</span>`;
           }
           const postedDate = new Date(messages[i].timestamp);
           messageEl.setAttribute('title', postedDate.toLocaleString('en-US'));

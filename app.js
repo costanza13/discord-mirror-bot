@@ -144,7 +144,7 @@ const init = () => {
           return [member.user.id, (member.nickname ? member.nickname : member.user.username)];
         });
         membersMap = new Map(membersArr);
-        console.log('MEMBERSMAP', membersMap);
+        // console.log('MEMBERSMAP', membersMap);
       })
       .then(() => {
         return bot.channels.fetch(CHANNEL_ID);
